@@ -1,0 +1,830 @@
+
+====================
+ELEMENT 6569837
+====================
+HTTP 200
+{
+  "part": {
+    "part_num": "65243pr0001",
+    "name": "Duplo Figure with Long Hair Parted on Left Bright Light Yellow, Bright Light Blue Legs, Lime Neckerchief Print",
+    "part_cat_id": 57,
+    "year_from": 2025,
+    "year_to": 2025,
+    "part_url": "https://rebrickable.com/parts/65243pr0001/duplo-figure-with-long-hair-parted-on-left-bright-light-yellow-bright-light-blue-legs-lime-neckerchief-print/",
+    "part_img_url": null,
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "47394pb366"
+      ],
+      "BrickOwl": [
+        "495597"
+      ],
+      "Brickset": [
+        "65243",
+        "97958"
+      ],
+      "LEGO": [
+        "65243",
+        "97958"
+      ]
+    },
+    "print_of": "65243"
+  },
+  "color": {
+    "id": 15,
+    "name": "White",
+    "rgb": "FFFFFF",
+    "is_trans": false,
+    "external_ids": {
+      "BrickLink": {
+        "ext_ids": [
+          1
+        ],
+        "ext_descrs": [
+          [
+            "White"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          92
+        ],
+        "ext_descrs": [
+          [
+            "White"
+          ]
+        ]
+      },
+      "Peeron": {
+        "ext_ids": [
+          null
+        ],
+        "ext_descrs": [
+          [
+            "white"
+          ]
+        ]
+      },
+      "LDraw": {
+        "ext_ids": [
+          15
+        ],
+        "ext_descrs": [
+          [
+            "White"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          1
+        ],
+        "ext_descrs": [
+          [
+            "White",
+            "WHITE V.3"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6569837",
+  "design_id": "97958",
+  "element_img_url": null,
+  "part_img_url": null
+}
+
+Part: 65243pr0001
+Name: Duplo Figure with Long Hair Parted on Left Bright Light Yellow, Bright Light Blue Legs, Lime Neckerchief Print
+BrickLink IDs: ['47394pb366']
+Color name: White
+BrickLink colors: [1]
+Category ID: 57
+
+====================
+ELEMENT 6569839
+====================
+HTTP 200
+{
+  "part": {
+    "part_num": "65242c01pr0001",
+    "name": "Duplo Figure with Hair Swept Right Reddish Brown, Dark Blue Glasses, with Medium Azure Legs, Shirt Print",
+    "part_cat_id": 57,
+    "year_from": 2025,
+    "year_to": 2025,
+    "part_url": "https://rebrickable.com/parts/65242c01pr0001/duplo-figure-with-hair-swept-right-reddish-brown-dark-blue-glasses-with-medium-azure-legs-shirt-print/",
+    "part_img_url": "https://cdn.rebrickable.com/media/parts/photos/25/65242c01pr0001-25-da5dcc96-a1c2-47b4-b3b0-be45a085d903.jpg",
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "47394pb368"
+      ],
+      "BrickOwl": [
+        "305262"
+      ],
+      "Brickset": [
+        "65242",
+        "97852"
+      ],
+      "LEGO": [
+        "65242",
+        "97852"
+      ]
+    },
+    "print_of": "65242"
+  },
+  "color": {
+    "id": 25,
+    "name": "Orange",
+    "rgb": "FE8A18",
+    "is_trans": false,
+    "external_ids": {
+      "BrickLink": {
+        "ext_ids": [
+          4
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          80
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          106
+        ],
+        "ext_descrs": [
+          [
+            "Bright orange",
+            "BR.ORANGE"
+          ]
+        ]
+      },
+      "Peeron": {
+        "ext_ids": [
+          null
+        ],
+        "ext_descrs": [
+          [
+            "orange"
+          ]
+        ]
+      },
+      "LDraw": {
+        "ext_ids": [
+          25
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6569839",
+  "design_id": "97852",
+  "element_img_url": null,
+  "part_img_url": "https://cdn.rebrickable.com/media/parts/photos/25/65242c01pr0001-25-da5dcc96-a1c2-47b4-b3b0-be45a085d903.jpg"
+}
+
+Part: 65242c01pr0001
+Name: Duplo Figure with Hair Swept Right Reddish Brown, Dark Blue Glasses, with Medium Azure Legs, Shirt Print
+BrickLink IDs: ['47394pb368']
+Color name: Orange
+BrickLink colors: [4]
+Category ID: 57
+
+====================
+ELEMENT 6569857
+====================
+HTTP 200
+{
+  "part": {
+    "part_num": "35516pr0178",
+    "name": "Duplo Figure with Thick Hair Combed Forward Reddish Brown, with Bright Light Blue Overall",
+    "part_cat_id": 57,
+    "year_from": 2024,
+    "year_to": 2024,
+    "part_url": "https://rebrickable.com/parts/35516pr0178/duplo-figure-with-thick-hair-combed-forward-reddish-brown-with-bright-light-blue-overall/",
+    "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6477388.jpg",
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "47394pb355"
+      ],
+      "BrickOwl": [
+        "1150145"
+      ],
+      "Brickset": [
+        "35516",
+        "97298"
+      ],
+      "LEGO": [
+        "35516",
+        "97298"
+      ]
+    },
+    "print_of": "35516"
+  },
+  "color": {
+    "id": 25,
+    "name": "Orange",
+    "rgb": "FE8A18",
+    "is_trans": false,
+    "external_ids": {
+      "BrickLink": {
+        "ext_ids": [
+          4
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          80
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          106
+        ],
+        "ext_descrs": [
+          [
+            "Bright orange",
+            "BR.ORANGE"
+          ]
+        ]
+      },
+      "Peeron": {
+        "ext_ids": [
+          null
+        ],
+        "ext_descrs": [
+          [
+            "orange"
+          ]
+        ]
+      },
+      "LDraw": {
+        "ext_ids": [
+          25
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6569857",
+  "design_id": "97298",
+  "element_img_url": "https://cdn.rebrickable.com/media/parts/elements/6477388.jpg",
+  "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6477388.jpg"
+}
+
+Part: 35516pr0178
+Name: Duplo Figure with Thick Hair Combed Forward Reddish Brown, with Bright Light Blue Overall
+BrickLink IDs: ['47394pb355']
+Color name: Orange
+BrickLink colors: [4]
+Category ID: 57
+
+====================
+ELEMENT 6569862
+====================
+HTTP 200
+{
+  "part": {
+    "part_num": "114674pr0001",
+    "name": "Duplo Figure with Short Hair Dark Brown, with Vibrant Yellow EMT Suit print",
+    "part_cat_id": 57,
+    "year_from": 2025,
+    "year_to": 2025,
+    "part_url": "https://rebrickable.com/parts/114674pr0001/duplo-figure-with-short-hair-dark-brown-with-vibrant-yellow-emt-suit-print/",
+    "part_img_url": null,
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "47394pb369"
+      ],
+      "BrickOwl": [
+        "1487064"
+      ],
+      "Brickset": [
+        "114674"
+      ],
+      "LEGO": [
+        "114674"
+      ]
+    },
+    "print_of": "114674"
+  },
+  "color": {
+    "id": 1062,
+    "name": "Vibrant Yellow",
+    "rgb": "EBD800",
+    "is_trans": false,
+    "external_ids": {
+      "LDraw": {
+        "ext_ids": [
+          368
+        ],
+        "ext_descrs": [
+          [
+            "Vibrant_Yellow"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          368
+        ],
+        "ext_descrs": [
+          [
+            "Vibrant Yellow"
+          ]
+        ]
+      },
+      "BrickLink": {
+        "ext_ids": [
+          236
+        ],
+        "ext_descrs": [
+          [
+            "Neon Yellow"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          211
+        ],
+        "ext_descrs": [
+          [
+            "Vibrant Yellow"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6569862",
+  "design_id": "114674",
+  "element_img_url": null,
+  "part_img_url": null
+}
+
+Part: 114674pr0001
+Name: Duplo Figure with Short Hair Dark Brown, with Vibrant Yellow EMT Suit print
+BrickLink IDs: ['47394pb369']
+Color name: Vibrant Yellow
+BrickLink colors: [236]
+Category ID: 57
+
+====================
+ELEMENT 6585429
+====================
+HTTP 200
+{
+  "part": {
+    "part_num": "10111pr0005",
+    "name": "Duplo Figure with Headset and Cap White, Dark Blue Legs, Safety Vest, Light Nougat Face Print",
+    "part_cat_id": 57,
+    "year_from": 2026,
+    "year_to": 2026,
+    "part_url": "https://rebrickable.com/parts/10111pr0005/duplo-figure-with-headset-and-cap-white-dark-blue-legs-safety-vest-light-nougat-face-print/",
+    "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6585429.jpg",
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "47394pb376"
+      ],
+      "BrickOwl": [
+        "1413556"
+      ],
+      "Brickset": [
+        "97368"
+      ],
+      "LEGO": [
+        "97368"
+      ]
+    },
+    "print_of": "10111"
+  },
+  "color": {
+    "id": 25,
+    "name": "Orange",
+    "rgb": "FE8A18",
+    "is_trans": false,
+    "external_ids": {
+      "BrickLink": {
+        "ext_ids": [
+          4
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          80
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          106
+        ],
+        "ext_descrs": [
+          [
+            "Bright orange",
+            "BR.ORANGE"
+          ]
+        ]
+      },
+      "Peeron": {
+        "ext_ids": [
+          null
+        ],
+        "ext_descrs": [
+          [
+            "orange"
+          ]
+        ]
+      },
+      "LDraw": {
+        "ext_ids": [
+          25
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6585429",
+  "design_id": "97368",
+  "element_img_url": "https://cdn.rebrickable.com/media/parts/elements/6585429.jpg",
+  "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6585429.jpg"
+}
+
+Part: 10111pr0005
+Name: Duplo Figure with Headset and Cap White, Dark Blue Legs, Safety Vest, Light Nougat Face Print
+BrickLink IDs: ['47394pb376']
+Color name: Orange
+BrickLink colors: [4]
+Category ID: 57
+
+====================
+ELEMENT 6585846
+====================
+HTTP 200
+{
+  "part": {
+    "part_num": "97928c01pr0001",
+    "name": "Duplo Figure with Construction Helmet White and Black Hair, Dark Blue Legs, Safety Vest Print",
+    "part_cat_id": 57,
+    "year_from": 2026,
+    "year_to": 2026,
+    "part_url": "https://rebrickable.com/parts/97928c01pr0001/duplo-figure-with-construction-helmet-white-and-black-hair-dark-blue-legs-safety-vest-print/",
+    "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6585846.jpg",
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "47394pb377"
+      ],
+      "BrickOwl": [
+        "1583955"
+      ],
+      "Brickset": [
+        "97928"
+      ],
+      "LEGO": [
+        "97928"
+      ]
+    },
+    "print_of": "97928c01"
+  },
+  "color": {
+    "id": 25,
+    "name": "Orange",
+    "rgb": "FE8A18",
+    "is_trans": false,
+    "external_ids": {
+      "BrickLink": {
+        "ext_ids": [
+          4
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          80
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          106
+        ],
+        "ext_descrs": [
+          [
+            "Bright orange",
+            "BR.ORANGE"
+          ]
+        ]
+      },
+      "Peeron": {
+        "ext_ids": [
+          null
+        ],
+        "ext_descrs": [
+          [
+            "orange"
+          ]
+        ]
+      },
+      "LDraw": {
+        "ext_ids": [
+          25
+        ],
+        "ext_descrs": [
+          [
+            "Orange"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6585846",
+  "design_id": "97928",
+  "element_img_url": "https://cdn.rebrickable.com/media/parts/elements/6585846.jpg",
+  "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6585846.jpg"
+}
+
+Part: 97928c01pr0001
+Name: Duplo Figure with Construction Helmet White and Black Hair, Dark Blue Legs, Safety Vest Print
+BrickLink IDs: ['47394pb377']
+Color name: Orange
+BrickLink colors: [4]
+Category ID: 57
+
+====================
+ELEMENT 6586684
+====================
+HTTP 200
+{
+  "part": {
+    "part_num": "23973pr9998",
+    "name": "Duplo Figure with Helmet White, Dark Blue Legs, Police Shirt with Badge and Zipper, Warm Tan Face Print",
+    "part_cat_id": 57,
+    "year_from": 2026,
+    "year_to": 2026,
+    "part_url": "https://rebrickable.com/parts/23973pr9998/duplo-figure-with-helmet-white-dark-blue-legs-police-shirt-with-badge-and-zipper-warm-tan-face-print/",
+    "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6586684.jpg",
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "47394pb375"
+      ],
+      "BrickOwl": [
+        "1588222"
+      ],
+      "Brickset": [
+        "49303"
+      ],
+      "LEGO": [
+        "49303"
+      ]
+    },
+    "print_of": "23973"
+  },
+  "color": {
+    "id": 322,
+    "name": "Medium Azure",
+    "rgb": "36AEBF",
+    "is_trans": false,
+    "external_ids": {
+      "BrickLink": {
+        "ext_ids": [
+          156
+        ],
+        "ext_descrs": [
+          [
+            "Medium Azure"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          73
+        ],
+        "ext_descrs": [
+          [
+            "Medium Azure"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          322,
+          491
+        ],
+        "ext_descrs": [
+          [
+            "Medium Azure",
+            "MEDIUM AZUR"
+          ],
+          []
+        ]
+      },
+      "Peeron": {
+        "ext_ids": [
+          null
+        ],
+        "ext_descrs": [
+          [
+            "mdazure"
+          ]
+        ]
+      },
+      "LDraw": {
+        "ext_ids": [
+          322
+        ],
+        "ext_descrs": [
+          [
+            "Medium_Azure"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6586684",
+  "design_id": "49303",
+  "element_img_url": "https://cdn.rebrickable.com/media/parts/elements/6586684.jpg",
+  "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6586684.jpg"
+}
+
+Part: 23973pr9998
+Name: Duplo Figure with Helmet White, Dark Blue Legs, Police Shirt with Badge and Zipper, Warm Tan Face Print
+BrickLink IDs: ['47394pb375']
+Color name: Medium Azure
+BrickLink colors: [156]
+Category ID: 57
+
+====================
+ELEMENT 6488925
+====================
+HTTP 200
+{
+  "part": {
+    "part_num": "69711pr0004",
+    "name": "Duplo Figure Child with Hair and Cap Lime, Light Aqua Legs, Bright Light Yellow Shirt Print",
+    "part_cat_id": 57,
+    "year_from": 2025,
+    "year_to": 2025,
+    "part_url": "https://rebrickable.com/parts/69711pr0004/duplo-figure-child-with-hair-and-cap-lime-light-aqua-legs-bright-light-yellow-shirt-print/",
+    "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6488925.jpg",
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "47205pb125"
+      ],
+      "BrickOwl": [
+        "873401"
+      ],
+      "Brickset": [
+        "69711"
+      ],
+      "LEGO": [
+        "69711"
+      ]
+    },
+    "print_of": "69711"
+  },
+  "color": {
+    "id": 226,
+    "name": "Bright Light Yellow",
+    "rgb": "FFF03A",
+    "is_trans": false,
+    "external_ids": {
+      "BrickLink": {
+        "ext_ids": [
+          103
+        ],
+        "ext_descrs": [
+          [
+            "Bright Light Yellow"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          44
+        ],
+        "ext_descrs": [
+          [
+            "Bright Light Yellow"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          226
+        ],
+        "ext_descrs": [
+          [
+            "Cool Yellow",
+            "COOL YEL.",
+            "COMPD. COOL YELLOW V.3"
+          ]
+        ]
+      },
+      "Peeron": {
+        "ext_ids": [
+          null
+        ],
+        "ext_descrs": [
+          [
+            "coolyellow"
+          ]
+        ]
+      },
+      "LDraw": {
+        "ext_ids": [
+          226
+        ],
+        "ext_descrs": [
+          [
+            "Bright_Light_Yellow"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6488925",
+  "design_id": "69711",
+  "element_img_url": "https://cdn.rebrickable.com/media/parts/elements/6488925.jpg",
+  "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6488925.jpg"
+}
+
+Part: 69711pr0004
+Name: Duplo Figure Child with Hair and Cap Lime, Light Aqua Legs, Bright Light Yellow Shirt Print
+BrickLink IDs: ['47205pb125']
+Color name: Bright Light Yellow
+BrickLink colors: [103]
+Category ID: 57

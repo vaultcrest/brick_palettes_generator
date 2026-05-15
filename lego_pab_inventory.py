@@ -11,6 +11,7 @@ from xml.dom import minidom
 import requests
 from curl_cffi import requests as curl_requests
 from dotenv import load_dotenv
+# Reserved for future BrickLink API use
 from requests_oauthlib import OAuth1
 
 load_dotenv()
@@ -33,6 +34,7 @@ REBRICKABLE_API_KEY = os.environ.get(
 # ------------------------------------------------------------
 # OUTPUT
 # ------------------------------------------------------------
+DEBUG = False
 
 OUTPUT_DIR = Path("output")
 
@@ -110,7 +112,7 @@ CACHE_DIR.mkdir(exist_ok=True)
 # ------------------------------------------------------------
 
 CACHE_FILE = (
-    CACHE_DIR / "bricklink_cache.json"
+    CACHE_DIR / "element_mapping_cache.json"
 )
 
 OVERRIDE_FILE = (
@@ -128,6 +130,7 @@ BESTSELLER_CACHE_FILE = (
 FAILED_CACHE_FILE = (
     CACHE_DIR / "failed_mappings.json"
 )
+
 # ------------------------------------------------------------
 # SAFE JSON LOADER
 # ------------------------------------------------------------
@@ -240,6 +243,10 @@ def get_channel_filename(channel):
 # REBRICKABLE FALLBACK
 # ------------------------------------------------------------
 
+# ------------------------------------------------------------
+# REBRICKABLE LOOKUP
+# ------------------------------------------------------------
+
 
 def lookup_rebrickable(element_id):
 
@@ -249,7 +256,7 @@ def lookup_rebrickable(element_id):
 
     url = (
         "https://rebrickable.com/api/v3/lego/"
-        f"parts/?search={element_id}"
+        f"elements/{element_id}/"
     )
 
     headers = {
@@ -258,62 +265,258 @@ def lookup_rebrickable(element_id):
         )
     }
 
-    try:
+    #
+    # Retry transient failures
+    #
 
-        response = requests.get(
-            url,
-            headers=headers,
-            timeout=30,
-        )
+    for attempt in range(3):
 
-        response.raise_for_status()
+        try:
 
-        data = response.json()
+            print(
+                f"\nRebrickable lookup for "
+                f"{element_id}"
+            )
 
-        results = data.get(
-            "results",
-            [],
-        )
+            response = requests.get(
+                url,
+                headers=headers,
+                timeout=30,
+            )
 
-        if not results:
+            print(
+                f"   HTTP "
+                f"{response.status_code}"
+            )
 
-            return None
+            #
+            # Not found
+            #
 
-        part = results[0]
+            if response.status_code == 404:
 
-        part_num = part.get(
-            "part_num"
-        )
+                print(
+                    "   Element not found"
+                )
 
-        if not part_num:
+                return None
 
-            return None
+            #
+            # Rate limited
+            #
 
-        print(
-            "   Rebrickable matched "
-            f"{part_num}"
-        )
+            if response.status_code == 429:
 
-        #
-        # Color unknown from Rebrickable
-        #
-        # Default to 0 for now
-        #
+                print(
+                    "   Rate limited"
+                )
 
-        return {
-            "bl_part_no": part_num,
-            "bl_color_id": 0,
-        }
+                time.sleep(5)
 
-    except Exception as e:
+                continue
 
-        print(
-            "   Rebrickable lookup failed:",
-            e,
-        )
+            #
+            # Temporary server errors
+            #
 
-        return None
+            if response.status_code >= 500:
 
+                print(
+                    "   Server error"
+                )
+
+                time.sleep(2)
+
+                continue
+
+            response.raise_for_status()
+
+            data = response.json()
+
+            if DEBUG:
+
+                print(
+                    json.dumps(
+                        data,
+                        indent=2,
+                    )
+                )
+
+            #
+            # Extract part
+            #
+
+            part = data.get(
+                "part",
+                {}
+            )
+
+            if not part:
+
+                print(
+                    "   Missing part data"
+                )
+
+                return None
+
+            part_name = part.get(
+                "name",
+                ""
+            )
+
+            part_cat_id = part.get(
+                "part_cat_id"
+            )
+
+            #
+            # Skip DUPLO figures only
+            #
+
+            if part_cat_id == 57:
+
+                print(
+                    "   Skipping DUPLO "
+                    "figure"
+                )
+
+                return None
+
+            #
+            # BrickLink IDs
+            #
+
+            bricklink_ids = (
+                part.get(
+                    "external_ids",
+                    {}
+                ).get(
+                    "BrickLink",
+                    []
+                )
+            )
+
+            if not bricklink_ids:
+
+                print(
+                    "   No BrickLink "
+                    "external IDs"
+                )
+
+                return None
+
+            bricklink_part = (
+                bricklink_ids[0]
+            )
+
+            #
+            # Extract color
+            #
+
+            color = data.get(
+                "color",
+                {}
+            )
+
+            bl_color_ids = (
+                color.get(
+                    "external_ids",
+                    {}
+                ).get(
+                    "BrickLink",
+                    {}
+                ).get(
+                    "ext_ids",
+                    []
+                )
+            )
+
+            if not bl_color_ids:
+
+                print(
+                    "   No BrickLink "
+                    "color mapping"
+                )
+
+                return None
+
+            bricklink_color = (
+                bl_color_ids[0]
+            )
+
+            #
+            # Determine BrickLink type
+            #
+
+            bl_item_type = "PART"
+
+            if (
+                bricklink_part.startswith(
+                    "47"
+                )
+            ):
+
+                bl_item_type = (
+                    "MINIFIG"
+                )
+
+            print(
+                f"   Rebrickable match: "
+                f"{bricklink_part} "
+                f"Color "
+                f"{bricklink_color}"
+            )
+
+            #
+            # Be polite to API
+            #
+
+            time.sleep(0.5)
+
+            return {
+                "bl_part_no": (
+                    bricklink_part
+                ),
+                "bl_color_id": (
+                    bricklink_color
+                ),
+                "bl_item_type": (
+                    bl_item_type
+                ),
+                "source": (
+                    "rebrickable"
+                ),
+            }
+
+        except requests.exceptions.Timeout:
+
+            print(
+                "   Request timeout"
+            )
+
+            time.sleep(2)
+
+        except requests.exceptions.ConnectionError:
+
+            print(
+                "   Connection error"
+            )
+
+            time.sleep(2)
+
+        except Exception as e:
+
+            print(
+                "   Rebrickable lookup "
+                f"failed: {e}"
+            )
+
+            time.sleep(2)
+
+    #
+    # Permanent failure after retries
+    #
+
+    return None
 
 # ------------------------------------------------------------
 # LEGO FETCH
@@ -386,8 +589,39 @@ def fetch_lego_inventory(per_page=400):
             "HTTP:",
             response.status_code,
         )
-
+        print(
+            f"   HTTP "
+            f"{response.status_code}"
+        )
         response.raise_for_status()
+
+        if response.status_code == 404:
+
+            print(
+                "   Element not found"
+            )
+
+            return None
+
+        if response.status_code == 429:
+
+            print(
+                "   RATE LIMITED"
+            )
+
+            time.sleep(5)
+
+            return lookup_rebrickable(
+                element_id
+            )
+
+        if response.status_code >= 500:
+
+            print(
+                "   Server error"
+            )
+
+            return None
 
         data = response.json()
 
@@ -467,14 +701,14 @@ def fetch_lego_inventory(per_page=400):
 # ------------------------------------------------------------
 
 
-def convert_element_to_bricklink(
+def resolve_element_mapping(
     element_id
 ):
 
     element_id = str(element_id)
 
     #
-    # Manual override first
+    # Manual override
     #
 
     if element_id in manual_overrides:
@@ -488,91 +722,19 @@ def convert_element_to_bricklink(
         ]
 
     #
-    # Failed cache
+    # Rebrickable lookup
     #
 
-    if element_id in failed_cache:
-
-        print(
-            "   Retrying previously "
-            "failed mapping"
-        )
-
-    #
-    # BrickLink lookup
-    #
-
-    url = (
-        "https://api.bricklink.com/"
-        "api/store/v1/"
-        f"item_mapping/{element_id}"
-    )
-
-    response = requests.get(
-        url,
-        auth=auth,
-        timeout=30,
-    )
-
-    print(
-        "\nBRICKLINK RAW RESPONSE:"
-    )
-
-    print(response.text)
-
-    data = response.json()
-
-    #
-    # Successful BrickLink mapping
-    #
-
-    if (
-        data.get(
-            "meta",
-            {},
-        ).get("code")
-        == 200
-        and data.get("data")
-        and len(data["data"]) > 0
-    ):
-
-        mapping = data["data"][0]
-
-        item = mapping.get("item")
-
-        color_id = mapping.get(
-            "color_id"
-        )
-
-        if (
-            item
-            and item.get("no")
-            and color_id is not None
-        ):
-
-            return {
-                "bl_part_no": item["no"],
-                "bl_color_id": color_id,
-            }
-
-    #
-    # Rebrickable fallback
-    #
-
-    print(
-        "   Trying Rebrickable fallback"
-    )
-
-    rb_mapping = lookup_rebrickable(
+    mapping = lookup_rebrickable(
         element_id
     )
 
-    if rb_mapping:
+    if mapping:
 
-        return rb_mapping
+        return mapping
 
     #
-    # Still unresolved
+    # Failed cache
     #
 
     failed_cache[element_id] = {
@@ -586,8 +748,6 @@ def convert_element_to_bricklink(
     )
 
     return None
-
-
 # ------------------------------------------------------------
 # XML GENERATION
 # ------------------------------------------------------------
@@ -606,10 +766,15 @@ def build_xml(items):
             "ITEM",
         )
 
+        item_type = item.get(
+            "itemtype",
+            "P",
+        )
+
         ET.SubElement(
             item_el,
             "ITEMTYPE",
-        ).text = "P"
+        ).text = item_type
 
         ET.SubElement(
             item_el,
@@ -655,7 +820,6 @@ def build_xml(items):
     )
 
     return xml_str
-
 
 # ------------------------------------------------------------
 # MAIN
@@ -752,7 +916,7 @@ def main():
             else:
 
                 mapping = (
-                    convert_element_to_bricklink(
+                    resolve_element_mapping(
                         element_id
                     )
                 )
@@ -853,6 +1017,13 @@ def main():
             ].append(
                 {
                     "itemid": combo[0],
+                    "itemtype": (
+                        "M"
+                        if mapping.get(
+                            "bl_item_type"
+                        ) == "MINIFIG"
+                        else "P"
+                    ),
                     "color": combo[1],
                     "remarks": (
                         f"{name} "
