@@ -1,0 +1,275 @@
+Fetching LEGO element 6577455...
+HTTP 200
+
+FULL RAW RESPONSE:
+
+{
+  "part": {
+    "part_num": "28621pr9517",
+    "name": "Minifig Head, Dark Orange Eyebrows, Freckles, Open Mouth Happy",
+    "part_cat_id": 59,
+    "year_from": 2026,
+    "year_to": 2026,
+    "part_url": "https://rebrickable.com/parts/28621pr9517/minifig-head-dark-orange-eyebrows-freckles-open-mouth-happy/",
+    "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6577455.jpg",
+    "prints": [],
+    "molds": [],
+    "alternates": [],
+    "external_ids": {
+      "BrickLink": [
+        "3626pb4052"
+      ],
+      "BrickOwl": [
+        "1559360"
+      ],
+      "Brickset": [
+        "114945"
+      ],
+      "LEGO": [
+        "114945"
+      ]
+    },
+    "print_of": "28621"
+  },
+  "color": {
+    "id": 14,
+    "name": "Yellow",
+    "rgb": "F2CD37",
+    "is_trans": false,
+    "external_ids": {
+      "BrickLink": {
+        "ext_ids": [
+          3
+        ],
+        "ext_descrs": [
+          [
+            "Yellow"
+          ]
+        ]
+      },
+      "BrickOwl": {
+        "ext_ids": [
+          93
+        ],
+        "ext_descrs": [
+          [
+            "Yellow"
+          ]
+        ]
+      },
+      "Peeron": {
+        "ext_ids": [
+          null
+        ],
+        "ext_descrs": [
+          [
+            "yellow"
+          ]
+        ]
+      },
+      "LDraw": {
+        "ext_ids": [
+          14
+        ],
+        "ext_descrs": [
+          [
+            "Yellow"
+          ]
+        ]
+      },
+      "LEGO": {
+        "ext_ids": [
+          24
+        ],
+        "ext_descrs": [
+          [
+            "Bright yellow",
+            "BR.YEL",
+            "BRIGHT YELLOW, VERSION 2"
+          ]
+        ]
+      }
+    }
+  },
+  "element_id": "6577455",
+  "design_id": "114945",
+  "element_img_url": "https://cdn.rebrickable.com/media/parts/elements/6577455.jpg",
+  "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6577455.jpg"
+}
+
+PART INFO:
+
+{
+  "part_num": "28621pr9517",
+  "name": "Minifig Head, Dark Orange Eyebrows, Freckles, Open Mouth Happy",
+  "part_cat_id": 59,
+  "year_from": 2026,
+  "year_to": 2026,
+  "part_url": "https://rebrickable.com/parts/28621pr9517/minifig-head-dark-orange-eyebrows-freckles-open-mouth-happy/",
+  "part_img_url": "https://cdn.rebrickable.com/media/parts/elements/6577455.jpg",
+  "prints": [],
+  "molds": [],
+  "alternates": [],
+  "external_ids": {
+    "BrickLink": [
+      "3626pb4052"
+    ],
+    "BrickOwl": [
+      "1559360"
+    ],
+    "Brickset": [
+      "114945"
+    ],
+    "LEGO": [
+      "114945"
+    ]
+  },
+  "print_of": "28621"
+}
+
+COLOR INFO:
+
+{
+  "id": 14,
+  "name": "Yellow",
+  "rgb": "F2CD37",
+  "is_trans": false,
+  "external_ids": {
+    "BrickLink": {
+      "ext_ids": [
+        3
+      ],
+      "ext_descrs": [
+        [
+          "Yellow"
+        ]
+      ]
+    },
+    "BrickOwl": {
+      "ext_ids": [
+        93
+      ],
+      "ext_descrs": [
+        [
+          "Yellow"
+        ]
+      ]
+    },
+    "Peeron": {
+      "ext_ids": [
+        null
+      ],
+      "ext_descrs": [
+        [
+          "yellow"
+        ]
+      ]
+    },
+    "LDraw": {
+      "ext_ids": [
+        14
+      ],
+      "ext_descrs": [
+        [
+          "Yellow"
+        ]
+      ]
+    },
+    "LEGO": {
+      "ext_ids": [
+        24
+      ],
+      "ext_descrs": [
+        [
+          "Bright yellow",
+          "BR.YEL",
+          "BRIGHT YELLOW, VERSION 2"
+        ]
+      ]
+    }
+  }
+}
+
+PART EXTERNAL IDS:
+
+{
+  "BrickLink": [
+    "3626pb4052"
+  ],
+  "BrickOwl": [
+    "1559360"
+  ],
+  "Brickset": [
+    "114945"
+  ],
+  "LEGO": [
+    "114945"
+  ]
+}
+
+COLOR EXTERNAL IDS:
+
+{
+  "BrickLink": {
+    "ext_ids": [
+      3
+    ],
+    "ext_descrs": [
+      [
+        "Yellow"
+      ]
+    ]
+  },
+  "BrickOwl": {
+    "ext_ids": [
+      93
+    ],
+    "ext_descrs": [
+      [
+        "Yellow"
+      ]
+    ]
+  },
+  "Peeron": {
+    "ext_ids": [
+      null
+    ],
+    "ext_descrs": [
+      [
+        "yellow"
+      ]
+    ]
+  },
+  "LDraw": {
+    "ext_ids": [
+      14
+    ],
+    "ext_descrs": [
+      [
+        "Yellow"
+      ]
+    ]
+  },
+  "LEGO": {
+    "ext_ids": [
+      24
+    ],
+    "ext_descrs": [
+      [
+        "Bright yellow",
+        "BR.YEL",
+        "BRIGHT YELLOW, VERSION 2"
+      ]
+    ]
+  }
+}
+
+RESOLVED BRICKLINK:
+
+BrickLink part: ['3626pb4052']
+BrickLink color: [3]
+
+Possible Studio DAT names:
+
+3626pb4052.dat
+bl_3626pb4052.dat

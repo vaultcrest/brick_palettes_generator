@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-import csv
 import json
-import logging
 import os
 import time
 import xml.etree.ElementTree as ET
@@ -23,54 +21,26 @@ load_dotenv()
 DEBUG = False
 
 OUTPUT_DIR = Path("output")
-
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 CACHE_DIR = Path("cache")
-
 CACHE_DIR.mkdir(exist_ok=True)
 
 DATA_DIR = Path("data")
 
-# ------------------------------------------------------------
-# CACHE FILES
-# ------------------------------------------------------------
+STUDIO_PALETTE_DIR = DATA_DIR / "studio_pallettes"
 
-LEGO_TO_BL_CACHE_FILE = (
-    CACHE_DIR / "lego_to_bricklink.json"
-)
+CANONICAL_DB_FILE = CACHE_DIR / "canonical_mapping.json"
 
-BL_TO_LEGO_CACHE_FILE = (
-    CACHE_DIR / "bricklink_to_lego.json"
-)
+FAILED_CACHE_FILE = CACHE_DIR / "failed_mappings.json"
 
-FAILED_CACHE_FILE = (
-    CACHE_DIR / "failed_mappings.json"
-)
+OVERRIDE_FILE = CACHE_DIR / "manual_overrides.json"
 
-OVERRIDE_FILE = (
-    CACHE_DIR / "manual_overrides.json"
-)
+BL_TO_LEGO_CACHE_FILE = CACHE_DIR / "bricklink_to_lego.json"
 
-DUPLICATE_CACHE_FILE = (
-    CACHE_DIR / "duplicate_cache.json"
-)
+STUDIO_REFERENCE_FILE = CACHE_DIR / "studio_palette_reference.json"
 
-SNAPSHOT_FILE = (
-    CACHE_DIR / "bestseller_snapshot.json"
-)
-
-# ------------------------------------------------------------
-# REBRICKABLE CSV FILES
-# ------------------------------------------------------------
-
-PART_CATEGORIES_CSV = (
-    DATA_DIR / "part_categories.csv"
-)
-
-# ------------------------------------------------------------
-# ITEM TYPE MAP
-# ------------------------------------------------------------
+SNAPSHOT_FILE = CACHE_DIR / "bestseller_snapshot.json"
 
 ITEM_TYPE_MAP = {
     "PART": "P",
@@ -79,7 +49,7 @@ ITEM_TYPE_MAP = {
 }
 
 # ------------------------------------------------------------
-# BRICKLINK AUTH
+# AUTH
 # ------------------------------------------------------------
 
 auth = OAuth1(
@@ -90,7 +60,7 @@ auth = OAuth1(
 )
 
 # ------------------------------------------------------------
-# GRAPHQL QUERY
+# GRAPHQL
 # ------------------------------------------------------------
 
 TEST_QUERY = """
@@ -109,64 +79,40 @@ query PickABrickQuery($input: ElementQueryInput!, $sku: String) {
 fragment ElementLeaf on SearchResultElement {
   id
   designId
-  collapseDesignId
   name
-  imageUrl
-  maxOrderQuantity
   deliveryChannel
-  colorHex
-  contrastColorHex
+  availability
 
   price {
     centAmount
     formattedAmount
     currencyCode
     formattedValue
-    __typename
   }
-
-  quantityInSet(sku: $sku)
-
-  siblings {
-    id
-    colorHex
-    contrastColorHex
-    availability
-
-    price {
-      formattedAmount
-      formattedValue
-      __typename
-    }
-
-    __typename
-  }
-
-  availability
-
-  __typename
 }
 """
 
 # ------------------------------------------------------------
-# JSON HELPERS
+# HELPERS
 # ------------------------------------------------------------
 
 
 def load_json_file(path, default):
 
     if path.exists():
+
         try:
+
             with open(
                 path,
                 encoding="utf-8",
             ) as f:
+
                 return json.load(f)
 
         except Exception as e:
-            print(
-                f"WARNING: Failed loading {path}: {e}"
-            )
+
+            print(f"Failed loading {path}: {e}")
 
     return default
 
@@ -178,26 +124,18 @@ def save_json_file(path, data):
         "w",
         encoding="utf-8",
     ) as f:
+
         json.dump(
             data,
             f,
             indent=2,
+            sort_keys=True,
         )
 
 
 # ------------------------------------------------------------
-# LOAD CACHES
+# LOAD STATE
 # ------------------------------------------------------------
-
-lego_to_bl_cache = load_json_file(
-    LEGO_TO_BL_CACHE_FILE,
-    {},
-)
-
-bl_to_lego_cache = load_json_file(
-    BL_TO_LEGO_CACHE_FILE,
-    {},
-)
 
 manual_overrides = load_json_file(
     OVERRIDE_FILE,
@@ -209,83 +147,178 @@ failed_cache = load_json_file(
     {},
 )
 
-duplicate_cache = load_json_file(
-    DUPLICATE_CACHE_FILE,
-    {},
-)
+canonical_db = {}
+
+studio_reference = {}
 
 # ------------------------------------------------------------
-# CATEGORY LOOKUP
+# STUDIO PALETTE REFERENCE PARSER
 # ------------------------------------------------------------
 
-part_categories = {}
 
+def parse_studio_palette_reference():
 
-def load_part_categories():
+    global studio_reference
 
-    if not PART_CATEGORIES_CSV.exists():
+    reference = {}
 
-        print(
-            "WARNING: Missing part_categories.csv"
-        )
+    if not STUDIO_PALETTE_DIR.exists():
 
-        return
+        print("No studio palette dir")
 
-    with open(
-        PART_CATEGORIES_CSV,
-        encoding="utf-8",
-    ) as f:
+        return {}
 
-        reader = csv.DictReader(f)
+    for palette_file in sorted(STUDIO_PALETTE_DIR.iterdir()):
 
-        for row in reader:
+        if not palette_file.is_file():
+            continue
 
-            part_categories[
-                row["id"]
-            ] = row["name"]
+        palette_name = palette_file.name
 
-    print(
-        f"Loaded {len(part_categories)} categories"
+        print(f"Parsing studio palette {palette_name}")
+
+        current_part = None
+
+        with open(
+            palette_file,
+            encoding="utf-8",
+            errors="ignore",
+        ) as f:
+
+            for raw_line in f:
+
+                line = raw_line.strip()
+
+                if not line:
+                    continue
+
+                if line.startswith("0 "):
+
+                    current_part = line[2:]
+
+                    if current_part not in reference:
+
+                        reference[current_part] = {
+                            "seen_in": [],
+                        }
+
+                    if palette_name not in reference[current_part]["seen_in"]:
+
+                        reference[current_part]["seen_in"].append(palette_name)
+
+    studio_reference = reference
+
+    save_json_file(
+        STUDIO_REFERENCE_FILE,
+        studio_reference,
     )
 
+    print(f"Loaded {len(reference)} studio refs")
+
 
 # ------------------------------------------------------------
-# CHANNEL HELPERS
+# CHANNEL
 # ------------------------------------------------------------
 
 
 def get_channel(item):
 
-    channel = item.get(
-        "deliveryChannel"
-    )
+    channel = item.get("deliveryChannel")
 
     if channel:
         return channel
 
-    availability = item.get(
-        "availability"
-    )
+    if item.get("availability") == "OUT_OF_STOCK":
 
-    if availability == "OUT_OF_STOCK":
         return "out_of_stock"
 
     return "unknown"
 
 
-def get_channel_filename(channel):
+# ------------------------------------------------------------
+# LEGO FETCH
+# ------------------------------------------------------------
 
-    mapping = {
-        "pab": "bestseller",
-        "bap": "standard",
-        "out_of_stock": "out_of_stock",
-        "unknown": "unknown",
+
+def fetch_lego_inventory(
+    per_page=400,
+):
+
+    url = "https://www.lego.com/api/graphql/" "PickABrickQuery"
+
+    headers = {
+        "Referer": ("https://www.lego.com/" "en-us/pick-and-build/" "pick-a-brick"),
+        "User-Agent": ("Mozilla/5.0"),
     }
 
-    return mapping.get(
-        channel,
-        channel,
+    all_results = []
+
+    page = 1
+
+    while True:
+
+        print(f"Fetching page {page}")
+
+        json_body = {
+            "operationName": ("PickABrickQuery"),
+            "variables": {
+                "input": {
+                    "page": page,
+                    "perPage": per_page,
+                    "sort": {
+                        "key": "RELEVANCE",
+                        "direction": "DESC",
+                    },
+                    "query": "",
+                    "fetchSiblings": True,
+                    "availability": [
+                        "AVAILABLE",
+                        "OUT_OF_STOCK",
+                    ],
+                },
+            },
+            "query": TEST_QUERY,
+        }
+
+        response = curl_requests.post(
+            url,
+            json=json_body,
+            headers=headers,
+            impersonate="chrome124",
+            timeout=60,
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        search = data["data"]["searchElements"]
+
+        results = search["results"]
+
+        if not results:
+            break
+
+        all_results.extend(results)
+
+        if len(results) < per_page:
+            break
+
+        page += 1
+
+        time.sleep(0.05)
+
+    snapshot_data = {
+        "timestamp": time.time(),
+        "results": all_results,
+    }
+
+    save_json_file(
+        SNAPSHOT_FILE,
+        snapshot_data,
     )
+
+    return all_results
 
 
 # ------------------------------------------------------------
@@ -297,10 +330,7 @@ def lookup_bricklink_mapping(
     element_id,
 ):
 
-    url = (
-        "https://api.bricklink.com/"
-        f"api/store/v1/item_mapping/{element_id}"
-    )
+    url = "https://api.bricklink.com/api/store/v1/" f"item_mapping/{element_id}"
 
     try:
 
@@ -314,66 +344,23 @@ def lookup_bricklink_mapping(
 
         data = response.json()
 
-        if DEBUG:
-            print(
-                json.dumps(
-                    data,
-                    indent=2,
-                )
-            )
-
-        if (
-            data["meta"]["code"] != 200
-            or not data["data"]
-        ):
+        if data["meta"]["code"] != 200 or not data["data"]:
 
             return None
 
         mapping = data["data"][0]
 
-        bricklink_part = (
-            mapping["item"]["no"]
-        )
-
-        bricklink_color = (
-            mapping["color_id"]
-        )
-
-        item_type = (
-            mapping["item"]["type"]
-        )
-
-        print(
-            "   BrickLink match: "
-            f"{bricklink_part} "
-            f"Color {bricklink_color}"
-        )
-
-        #
-        # Be polite to API
-        #
-
-        time.sleep(0.5)
-
         return {
-            "bl_part_no": (
-                bricklink_part
-            ),
-            "bl_color_id": (
-                bricklink_color
-            ),
-            "bl_item_type": (
-                item_type
-            ),
-            "source": (
-                "bricklink"
-            ),
+            "bl_part_no": (mapping["item"]["no"]),
+            "bl_color_id": (mapping["color_id"]),
+            "bl_item_type": (mapping["item"]["type"]),
+            "source": "bricklink",
         }
 
     except Exception as e:
 
         print(
-            "   BrickLink lookup failed:",
+            "BrickLink lookup failed:",
             e,
         )
 
@@ -381,7 +368,7 @@ def lookup_bricklink_mapping(
 
 
 # ------------------------------------------------------------
-# OPTIONAL REBRICKABLE FALLBACK
+# REBRICKABLE FALLBACK
 # ------------------------------------------------------------
 
 
@@ -389,101 +376,158 @@ def lookup_rebrickable_fallback(
     element_id,
 ):
 
-    #
-    # Reserved for future fallback logic
-    #
+    api_key = os.getenv("REBRICKABLE_API_KEY")
 
-    return None
+    if not api_key:
+        return None
 
+    url = "https://rebrickable.com/api/v3/lego/" f"elements/{element_id}/"
 
-# ------------------------------------------------------------
-# RESOLVE ELEMENT
-# ------------------------------------------------------------
+    headers = {
+        "Authorization": (f"key {api_key}"),
+        "User-Agent": ("brick-palette-generator/1.0"),
+    }
 
+    try:
 
-def resolve_element_mapping(
-    element_id,
-):
-
-    element_id = str(
-        element_id
-    )
-
-    #
-    # Manual override
-    #
-
-    if element_id in manual_overrides:
-
-        print(
-            "   Using MANUAL override"
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=30,
         )
 
-        return manual_overrides[
-            element_id
-        ]
+        if response.status_code != 200:
+            return None
 
-    #
-    # Failed cache
-    #
+        data = response.json()
 
-    if element_id in failed_cache:
+        part = data.get(
+            "part",
+            {},
+        )
+
+        color = data.get(
+            "color",
+            {},
+        )
+
+        bricklink_ids = part.get(
+            "external_ids",
+            {},
+        ).get(
+            "BrickLink",
+            [],
+        )
+
+        if not bricklink_ids:
+            return None
+
+        bl_color_ids = (
+            color.get(
+                "external_ids",
+                {},
+            )
+            .get(
+                "BrickLink",
+                {},
+            )
+            .get(
+                "ext_ids",
+                [],
+            )
+        )
+
+        if not bl_color_ids:
+            return None
+
+        ldraw_color_ids = (
+            color.get(
+                "external_ids",
+                {},
+            )
+            .get(
+                "LDraw",
+                {},
+            )
+            .get(
+                "ext_ids",
+                [],
+            )
+        )
+
+        return {
+            "bl_part_no": (bricklink_ids[0]),
+            "bl_color_id": (bl_color_ids[0]),
+            "ldraw_color_id": (ldraw_color_ids[0] if ldraw_color_ids else 7),
+            "bl_item_type": "PART",
+            "source": ("rebrickable_fallback"),
+        }
+
+    except Exception as e:
 
         print(
-            "   Previously failed"
+            "Rebrickable fallback failed:",
+            e,
         )
 
         return None
 
-    #
-    # Cache
-    #
 
-    if element_id in lego_to_bl_cache:
+# ------------------------------------------------------------
+# STUDIO PART FILE
+# ------------------------------------------------------------
 
-        print(
-            "   Using cached mapping"
-        )
 
-        return lego_to_bl_cache[
-            element_id
-        ]
+def build_studio_part_file(
+    bricklink_part,
+):
 
-    #
-    # BrickLink authoritative lookup
-    #
+    if "pb" in bricklink_part or "pr" in bricklink_part:
 
-    mapping = lookup_bricklink_mapping(
-        element_id
-    )
+        return f"bl_{bricklink_part}.dat"
 
-    #
-    # Optional fallback
-    #
+    return f"{bricklink_part}.dat"
+
+
+# ------------------------------------------------------------
+# RESOLVE MAPPING
+# ------------------------------------------------------------
+
+
+def resolve_mapping(
+    element_id,
+):
+
+    element_id = str(element_id)
+
+    if element_id in manual_overrides:
+
+        return manual_overrides[element_id]
+
+    if element_id in failed_cache:
+
+        return None
+
+    mapping = lookup_bricklink_mapping(element_id)
 
     if not mapping:
 
-        mapping = (
-            lookup_rebrickable_fallback(
-                element_id
+        mapping = lookup_rebrickable_fallback(element_id)
+
+        if mapping:
+
+            manual_overrides[element_id] = mapping
+
+            save_json_file(
+                OVERRIDE_FILE,
+                manual_overrides,
             )
-        )
-
-    #
-    # Failure
-    #
 
     if not mapping:
 
-        failed_cache[
-            element_id
-        ] = {
-            "status": (
-                "unresolved"
-            ),
-            "checked_at": (
-                time.time()
-            ),
+        failed_cache[element_id] = {
+            "status": "unresolved",
+            "timestamp": (time.time()),
         }
 
         save_json_file(
@@ -493,268 +537,302 @@ def resolve_element_mapping(
 
         return None
 
-    #
-    # Save LEGO -> BrickLink
-    #
-
-    lego_to_bl_cache[
-        element_id
-    ] = mapping
-
-    save_json_file(
-        LEGO_TO_BL_CACHE_FILE,
-        lego_to_bl_cache,
-    )
-
-    #
-    # Save BrickLink -> LEGO
-    #
-
-    reverse_key = (
-        f"{mapping['bl_part_no']}"
-        f"|{mapping['bl_color_id']}"
-        f"|{mapping['bl_item_type']}"
-    )
-
-    if reverse_key not in bl_to_lego_cache:
-
-        bl_to_lego_cache[
-            reverse_key
-        ] = []
-
-    if (
-        element_id
-        not in bl_to_lego_cache[
-            reverse_key
-        ]
-    ):
-
-        bl_to_lego_cache[
-            reverse_key
-        ].append(
-            element_id
-        )
-
-    save_json_file(
-        BL_TO_LEGO_CACHE_FILE,
-        bl_to_lego_cache,
-    )
-
     return mapping
 
 
 # ------------------------------------------------------------
-# LEGO FETCH
+# BUILD CANONICAL DB
 # ------------------------------------------------------------
 
 
-def fetch_lego_inventory(
-    per_page=400,
-):
+def build_canonical_db(results):
 
-    url = (
-        "https://www.lego.com/"
-        "api/graphql/PickABrickQuery"
-    )
+    global canonical_db
 
-    headers = {
-        "Referer": (
-            "https://www.lego.com/"
-            "en-us/pick-and-build/"
-            "pick-a-brick"
-        ),
-        "User-Agent": (
-            "Mozilla/5.0 "
-            "(Windows NT 10.0; "
-            "Win64; x64) "
-            "AppleWebKit/537.36 "
-            "(KHTML, like Gecko) "
-            "Chrome/124.0.0.0 "
-            "Safari/537.36"
-        ),
-    }
+    canonical = {}
 
-    all_results = []
+    for item in results:
 
-    page = 1
+        element_id = str(item["id"])
 
-    while True:
+        mapping = resolve_mapping(element_id)
 
-        print(
-            f"\nFetching page {page}..."
+        if not mapping:
+            continue
+
+        bricklink_part = mapping["bl_part_no"]
+
+        studio_part = build_studio_part_file(bricklink_part)
+
+        studio_color = mapping.get(
+            "ldraw_color_id",
+            7,
         )
 
-        json_body = {
-            "operationName": (
-                "PickABrickQuery"
-            ),
-            "variables": {
-                "input": {
-                    "page": page,
-                    "perPage": per_page,
-                    "sort": {
-                        "key": (
-                            "RELEVANCE"
-                        ),
-                        "direction": (
-                            "DESC"
-                        ),
-                    },
-                    "availability": [
-                        "AVAILABLE",
-                        "OUT_OF_STOCK",
-                    ],
-                    "query": "",
-                    "fetchSiblings": True,
-                }
+        canonical[element_id] = {
+            "lego": {
+                "element_id": (element_id),
+                "design_id": (item.get("designId")),
+                "name": (item.get("name")),
             },
-            "query": TEST_QUERY,
+            "bricklink": {
+                "part_no": (bricklink_part),
+                "color_id": (mapping["bl_color_id"]),
+                "item_type": (mapping["bl_item_type"]),
+            },
+            "studio": {
+                "part_file": (studio_part),
+                "color_id": (studio_color),
+                "known_studio_part": (studio_part in studio_reference),
+            },
+            "channel": (get_channel(item)),
+            "price": {
+                "cent_amount": (
+                    item.get("price", {}).get(
+                        "centAmount",
+                        0,
+                    )
+                ),
+                "formatted": (
+                    item.get("price", {}).get(
+                        "formattedAmount",
+                        "$0.00",
+                    )
+                ),
+            },
+            "source": (mapping["source"]),
         }
 
-        response = curl_requests.post(
-            url,
-            json=json_body,
-            headers=headers,
-            impersonate="chrome124",
-            timeout=60,
-        )
-
-        print(
-            "HTTP:",
-            response.status_code,
-        )
-
-        response.raise_for_status()
-
-        data = response.json()
-
-        search = (
-            data["data"][
-                "searchElements"
-            ]
-        )
-
-        results = search[
-            "results"
-        ]
-
-        total = search[
-            "total"
-        ]
-
-        print(
-            f"Received "
-            f"{len(results)} "
-            f"results "
-            f"(total: {total})"
-        )
-
-        if not results:
-            break
-
-        all_results.extend(
-            results
-        )
-
-        if len(results) < per_page:
-            break
-
-        page += 1
-
-        time.sleep(0.05)
-
-    snapshot_data = {
-        "timestamp": (
-            time.time()
-        ),
-        "results": (
-            all_results
-        ),
-    }
+    canonical_db = canonical
 
     save_json_file(
-        SNAPSHOT_FILE,
-        snapshot_data,
+        CANONICAL_DB_FILE,
+        canonical_db,
     )
 
-    return all_results
+    print(f"Saved canonical DB: " f"{len(canonical_db)} entries")
 
 
 # ------------------------------------------------------------
-# XML GENERATION
+# XML EXPORT
 # ------------------------------------------------------------
 
 
-def build_xml(items):
+def build_xml(entries):
 
-    inventory = ET.Element(
-        "INVENTORY"
-    )
+    inventory = ET.Element("INVENTORY")
 
-    for item in items:
+    for entry in entries:
 
-        item_el = ET.SubElement(
+        item = ET.SubElement(
             inventory,
             "ITEM",
         )
 
         ET.SubElement(
-            item_el,
+            item,
             "ITEMTYPE",
-        ).text = item[
-            "itemtype"
-        ]
-
-        ET.SubElement(
-            item_el,
-            "ITEMID",
-        ).text = item[
-            "itemid"
-        ]
-
-        ET.SubElement(
-            item_el,
-            "COLOR",
-        ).text = str(
-            item["color"]
+        ).text = ITEM_TYPE_MAP.get(
+            entry["bricklink"]["item_type"],
+            "P",
         )
 
         ET.SubElement(
-            item_el,
-            "QTY",
+            item,
+            "ITEMID",
+        ).text = entry[
+            "bricklink"
+        ]["part_no"]
+
+        ET.SubElement(
+            item,
+            "COLOR",
+        ).text = str(entry["bricklink"]["color_id"])
+
+        ET.SubElement(
+            item,
+            "MAXPRICE",
+        ).text = f"{entry['price']['cent_amount'] / 100:.4f}"
+
+        ET.SubElement(
+            item,
+            "MINQTY",
         ).text = "1"
 
         ET.SubElement(
-            item_el,
+            item,
+            "CONDITION",
+        ).text = "X"
+
+        ET.SubElement(
+            item,
             "REMARKS",
-        ).text = item[
-            "remarks"
-        ]
+        ).text = (
+            f"{entry['lego']['name']} "
+            f"(LEGO Element "
+            f"{entry['lego']['element_id']})"
+        )
+
+        ET.SubElement(
+            item,
+            "NOTIFY",
+        ).text = "N"
 
     xml_bytes = ET.tostring(
         inventory,
         encoding="utf-8",
     )
 
-    xml_str = (
-        minidom.parseString(
-            xml_bytes
-        ).toprettyxml(
-            indent="  "
+    xml_str = minidom.parseString(xml_bytes).toprettyxml(indent="  ")
+
+    return "\n".join(line for line in xml_str.splitlines() if line.strip())
+
+
+# ------------------------------------------------------------
+# PALETTE EXPORT
+# ------------------------------------------------------------
+
+
+def build_palette(entries, name):
+
+    lines = [
+        f"~+{name}",
+        "0",
+        "-1",
+    ]
+
+    seen = set()
+
+    for entry in entries:
+
+        part_file = entry["studio"]["part_file"]
+
+        color_id = entry["studio"]["color_id"]
+
+        key = (
+            part_file,
+            color_id,
         )
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+
+        lines.append(f"0 {part_file}")
+
+        lines.append(f"1 {entry['lego']['name']}")
+
+        lines.append(f"2 {color_id}")
+
+    return "\n".join(lines)
+
+
+# ------------------------------------------------------------
+# EXPORTS
+# ------------------------------------------------------------
+
+
+def export_outputs():
+
+    channels = {
+        "bestseller": [],
+        "standard": [],
+        "out_of_stock": [],
+        "all": [],
+    }
+
+    for entry in canonical_db.values():
+
+        channel = entry["channel"]
+
+        channels["all"].append(entry)
+
+        if channel == "pab":
+
+            channels["bestseller"].append(entry)
+
+        elif channel == "bap":
+
+            channels["standard"].append(entry)
+
+        elif channel == "out_of_stock":
+
+            channels["out_of_stock"].append(entry)
+
+    # XML
+
+    for (
+        name,
+        entries,
+    ) in channels.items():
+
+        xml_output = build_xml(entries)
+
+        with open(
+            OUTPUT_DIR / f"lego_inventory_{name}.xml",
+            "w",
+            encoding="utf-8",
+        ) as f:
+
+            f.write(xml_output)
+
+        print(f"Saved XML {name}")
+
+    # Studio palettes
+
+    for (
+        name,
+        entries,
+    ) in channels.items():
+
+        palette_output = build_palette(
+            entries,
+            name,
+        )
+
+        with open(
+            OUTPUT_DIR / f"{name}.palette",
+            "w",
+            encoding="utf-8",
+        ) as f:
+
+            f.write(palette_output)
+
+        print(f"Saved palette {name}")
+
+
+# ------------------------------------------------------------
+# REVERSE INDEX
+# ------------------------------------------------------------
+
+
+def rebuild_reverse_index():
+
+    reverse = {}
+
+    for (
+        element_id,
+        entry,
+    ) in canonical_db.items():
+
+        key = (
+            f"{entry['bricklink']['part_no']}"
+            f"|{entry['bricklink']['color_id']}"
+            f"|{entry['bricklink']['item_type']}"
+        )
+
+        if key not in reverse:
+            reverse[key] = []
+
+        reverse[key].append(element_id)
+
+    save_json_file(
+        BL_TO_LEGO_CACHE_FILE,
+        reverse,
     )
 
-    xml_lines = (
-        xml_str.splitlines()
-    )
-
-    return "\n".join(
-        line
-        for line in xml_lines
-        if not line.startswith(
-            "<?xml"
-        )
-    )
+    print(f"Saved reverse index " f"{len(reverse)}")
 
 
 # ------------------------------------------------------------
@@ -764,300 +842,29 @@ def build_xml(items):
 
 def main():
 
-    logging.basicConfig(
-        level=logging.INFO
-    )
+    parse_studio_palette_reference()
 
-    load_part_categories()
-
-    channel_exports = {}
-
-    seen_combos = set()
-
-    print(
-        "Fetching LEGO inventory..."
-    )
+    print("Fetching LEGO inventory")
 
     results = fetch_lego_inventory()
-
-    #
-    # Deduplicate LEGO IDs
-    #
 
     unique = {}
 
     for item in results:
 
-        unique[
-            item["id"]
-        ] = item
+        unique[item["id"]] = item
 
-    results = list(
-        unique.values()
-    )
+    results = list(unique.values())
 
-    print(
-        f"\nFound "
-        f"{len(results)} "
-        f"unique items"
-    )
+    print(f"Unique LEGO items: " f"{len(results)}")
 
-    #
-    # Process
-    #
+    build_canonical_db(results)
 
-    for idx, item in enumerate(
-        results,
-        start=1,
-    ):
+    rebuild_reverse_index()
 
-        element_id = item.get(
-            "id"
-        )
+    export_outputs()
 
-        design_id = item.get(
-            "designId"
-        )
-
-        channel = get_channel(
-            item
-        )
-
-        name = item.get(
-            "name",
-            "Unknown",
-        )
-
-        print(
-            f"[{idx}] "
-            f"Element {element_id} "
-            f"Design {design_id} "
-            f"Channel {channel} "
-            f":: {name}"
-        )
-
-        if not element_id:
-            continue
-
-        mapping = (
-            resolve_element_mapping(
-                element_id
-            )
-        )
-
-        if not mapping:
-
-            print(
-                "   No mapping"
-            )
-
-            continue
-
-        combo = (
-            mapping[
-                "bl_part_no"
-            ],
-            mapping[
-                "bl_color_id"
-            ],
-        )
-
-        channel_combo = (
-            channel,
-            combo[0],
-            combo[1],
-        )
-
-        combo_key = (
-            f"{combo[0]}"
-            f"|{combo[1]}"
-        )
-
-        #
-        # Deduplicate
-        #
-
-        if (
-            channel_combo
-            in seen_combos
-        ):
-
-            print(
-                "   DUPLICATE "
-                f"{combo[0]} "
-                f"Color {combo[1]}"
-            )
-
-            if (
-                combo_key
-                not in duplicate_cache
-            ):
-
-                duplicate_cache[
-                    combo_key
-                ] = {
-                    "primary_element_id": (
-                        element_id
-                    ),
-                    "duplicates": [],
-                }
-
-            duplicate_cache[
-                combo_key
-            ][
-                "duplicates"
-            ].append(
-                element_id
-            )
-
-            save_json_file(
-                DUPLICATE_CACHE_FILE,
-                duplicate_cache,
-            )
-
-            continue
-
-        seen_combos.add(
-            channel_combo
-        )
-
-        if (
-            channel
-            not in channel_exports
-        ):
-
-            channel_exports[
-                channel
-            ] = []
-
-        channel_exports[
-            channel
-        ].append(
-            {
-                "itemid": (
-                    mapping[
-                        "bl_part_no"
-                    ]
-                ),
-                "itemtype": (
-                    ITEM_TYPE_MAP.get(
-                        mapping[
-                            "bl_item_type"
-                        ],
-                        "P",
-                    )
-                ),
-                "color": (
-                    mapping[
-                        "bl_color_id"
-                    ]
-                ),
-                "remarks": (
-                    f"{name} "
-                    f"(LEGO Element "
-                    f"{element_id}) "
-                    f"[Channel "
-                    f"{channel}]"
-                ).replace(
-                    "&",
-                    " and ",
-                ),
-            }
-        )
-
-        print(
-            f"   BL: "
-            f"{mapping['bl_part_no']} "
-            f"Color "
-            f"{mapping['bl_color_id']}"
-        )
-
-    #
-    # XML exports
-    #
-
-    print(
-        "\nGenerating XML exports..."
-    )
-
-    for (
-        channel,
-        items,
-    ) in channel_exports.items():
-
-        if not items:
-            continue
-
-        xml_output = build_xml(
-            items
-        )
-
-        filename = (
-            "lego_inventory_"
-            f"{get_channel_filename(channel)}"
-            ".xml"
-        )
-
-        output_path = (
-            OUTPUT_DIR
-            / filename
-        )
-
-        with open(
-            output_path,
-            "w",
-            encoding="utf-8",
-        ) as f:
-
-            f.write(
-                xml_output
-            )
-
-        print(
-            f"Saved {output_path} "
-            f"({len(items)} items)"
-        )
-
-    #
-    # Combined export
-    #
-
-    all_items = []
-
-    for items in (
-        channel_exports.values()
-    ):
-
-        all_items.extend(
-            items
-        )
-
-    xml_output = build_xml(
-        all_items
-    )
-
-    output_path = (
-        OUTPUT_DIR
-        / "lego_inventory_all.xml"
-    )
-
-    with open(
-        output_path,
-        "w",
-        encoding="utf-8",
-    ) as f:
-
-        f.write(
-            xml_output
-        )
-
-    print(
-        f"\nSaved "
-        f"{output_path} "
-        f"({len(all_items)} items)"
-    )
-
-    print("\nDONE")
+    print("DONE")
 
 
 if __name__ == "__main__":

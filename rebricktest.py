@@ -2,113 +2,169 @@
 
 import json
 import os
-import time
 
 import requests
-
 from dotenv import load_dotenv
 
 load_dotenv()
 
+#
+# CONFIG
+#
+
 REBRICKABLE_API_KEY = os.getenv("REBRICKABLE_API_KEY")
 
-if not REBRICKABLE_API_KEY:
-    raise SystemExit("Missing REBRICKABLE_API_KEY")
-
-headers = {"Authorization": (f"key {REBRICKABLE_API_KEY}")}
-
 #
-# Test IDs
+# TEST ELEMENT
 #
 
-ELEMENT_IDS = [
-    "6569837",
-    "6569839",
-    "6569857",
-    "6569862",
-    "6585429",
-    "6585846",
-    "6586684",
-    "6488925",
-]
+ELEMENT_ID = "6577455"
 
-for element_id in ELEMENT_IDS:
-    print("\n====================")
-    print(f"ELEMENT {element_id}")
-    print("====================")
+#
+# REQUEST
+#
 
-    url = f"https://rebrickable.com/api/v3/lego/elements/{element_id}/"
+url = "https://rebrickable.com/api/v3/lego/" f"elements/{ELEMENT_ID}/"
 
-    try:
-        response = requests.get(
-            url,
-            headers=headers,
-            timeout=30,
-        )
+headers = {
+    "Authorization": (f"key {REBRICKABLE_API_KEY}"),
+    "User-Agent": ("rebrickable-debug/1.0"),
+}
 
-        print(f"HTTP {response.status_code}")
+print(f"Fetching LEGO element " f"{ELEMENT_ID}...")
 
-        if response.status_code != 200:
-            print(response.text)
+response = requests.get(
+    url,
+    headers=headers,
+    timeout=30,
+)
 
-            continue
+print(f"HTTP {response.status_code}")
 
-        data = response.json()
+response.raise_for_status()
 
-        #
-        # Pretty dump
-        #
+data = response.json()
 
-        print(
-            json.dumps(
-                data,
-                indent=2,
-            )
-        )
+#
+# FULL RAW OUTPUT
+#
 
-        #
-        # Extract part
-        #
+print("\nFULL RAW RESPONSE:\n")
 
-        part = data.get("part", {})
+print(
+    json.dumps(
+        data,
+        indent=2,
+    )
+)
 
-        part_name = part.get("name")
+#
+# PART INFO
+#
 
-        part_num = part.get("part_num")
+part = data.get("part", {})
 
-        print(f"\nPart: {part_num}")
+print("\nPART INFO:\n")
 
-        print(f"Name: {part_name}")
+print(
+    json.dumps(
+        part,
+        indent=2,
+    )
+)
 
-        #
-        # BrickLink IDs
-        #
+#
+# COLOR INFO
+#
 
-        bricklink_ids = part.get("external_ids", {}).get("BrickLink", [])
+color = data.get("color", {})
 
-        print(f"BrickLink IDs: {bricklink_ids}")
+print("\nCOLOR INFO:\n")
 
-        #
-        # Color info
-        #
+print(
+    json.dumps(
+        color,
+        indent=2,
+    )
+)
 
-        color = data.get("color", {})
+#
+# EXTERNAL IDS
+#
 
-        print(f"Color name: {color.get('name')}")
+print("\nPART EXTERNAL IDS:\n")
 
-        bl_color_ids = (
-            color.get("external_ids", {}).get("BrickLink", {}).get("ext_ids", [])
-        )
+print(
+    json.dumps(
+        part.get(
+            "external_ids",
+            {},
+        ),
+        indent=2,
+    )
+)
 
-        print(f"BrickLink colors: {bl_color_ids}")
+print("\nCOLOR EXTERNAL IDS:\n")
 
-        #
-        # Category
-        #
+print(
+    json.dumps(
+        color.get(
+            "external_ids",
+            {},
+        ),
+        indent=2,
+    )
+)
 
-        print(f"Category ID: {part.get('part_cat_id')}")
+#
+# BrickLink extraction
+#
 
-    except Exception as e:
-        print(f"FAILED: {e}")
+bricklink_ids = part.get(
+    "external_ids",
+    {},
+).get(
+    "BrickLink",
+    [],
+)
 
-    time.sleep(1)
+bl_color_ids = (
+    color.get(
+        "external_ids",
+        {},
+    )
+    .get(
+        "BrickLink",
+        {},
+    )
+    .get(
+        "ext_ids",
+        [],
+    )
+)
+
+print("\nRESOLVED BRICKLINK:\n")
+
+print(
+    "BrickLink part:",
+    bricklink_ids,
+)
+
+print(
+    "BrickLink color:",
+    bl_color_ids,
+)
+
+#
+# Studio DAT guesses
+#
+
+if bricklink_ids:
+
+    bl_part = bricklink_ids[0]
+
+    print("\nPossible Studio DAT names:\n")
+
+    print(f"{bl_part}.dat")
+
+    print(f"bl_{bl_part}.dat")
