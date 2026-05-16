@@ -181,12 +181,6 @@ def lookup_rebrickable(
                 return None
 
             #
-            # Skip DUPLO figures
-            #
-
-            part_cat_id = part.get("part_cat_id")
-
-            #
             # BrickLink part IDs
             #
 

@@ -79,18 +79,45 @@ query PickABrickQuery($input: ElementQueryInput!, $sku: String) {
 fragment ElementLeaf on SearchResultElement {
   id
   designId
+  collapseDesignId
   name
+  imageUrl
+  maxOrderQuantity
   deliveryChannel
-  availability
+  colorHex
+  contrastColorHex
 
   price {
     centAmount
     formattedAmount
     currencyCode
     formattedValue
+    __typename
   }
+
+  quantityInSet(sku: $sku)
+
+  siblings {
+    id
+    colorHex
+    contrastColorHex
+    availability
+
+    price {
+      formattedAmount
+      formattedValue
+      __typename
+    }
+
+    __typename
+  }
+
+  availability
+
+  __typename
 }
 """
+
 
 # ------------------------------------------------------------
 # HELPERS
@@ -245,7 +272,6 @@ def fetch_lego_inventory(
 ):
 
     url = "https://www.lego.com/api/graphql/" "PickABrickQuery"
-
     headers = {
         "Referer": ("https://www.lego.com/" "en-us/pick-and-build/" "pick-a-brick"),
         "User-Agent": ("Mozilla/5.0"),
@@ -792,7 +818,7 @@ def export_outputs():
         )
 
         with open(
-            OUTPUT_DIR / f"{name}.palette",
+            OUTPUT_DIR / f"{name}",
             "w",
             encoding="utf-8",
         ) as f:

@@ -167,6 +167,6 @@ print(f"Reverse mappings: " f"{len(reverse_cache)}")
 
 print(f"Duplicate entries skipped: " f"{duplicates}")
 
-print(f"\nSaved:")
+print("\nSaved:")
 
 print(BL_TO_LEGO_CACHE_FILE)
