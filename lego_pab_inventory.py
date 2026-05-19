@@ -43,7 +43,9 @@ STUDIO_REFERENCE_FILE = CACHE_DIR / "studio_palette_reference.json"
 
 SNAPSHOT_FILE = CACHE_DIR / "pab_snapshot.json"
 
-FORCE_REFRESH = False
+COLOR_DATABASE_FILE = DATA_DIR / "color_database.json"
+
+FORCE_REFRESH = True #False
 
 ITEM_TYPE_MAP = {
     "PART": "P",
@@ -237,6 +239,17 @@ canonical_db = load_json_file(
 print(
     f"Loaded canonical cache: "
     f"{len(canonical_db)} entries"
+)
+
+color_database = load_json_file(
+    COLOR_DATABASE_FILE,
+    {},
+)
+
+print(
+    f"Loaded color database: "
+    f"{len(color_database.get('bricklink', {}))} "
+    f"BrickLink colors"
 )
 
 studio_reference = {}
@@ -587,6 +600,40 @@ def lookup_bricklink_mapping(
 
             return None
 
+# ------------------------------------------------------------
+# Color Resolver
+# ------------------------------------------------------------
+
+def resolve_studio_color(
+    bricklink_color_id,
+):
+
+    bricklink_colors = (
+        color_database.get(
+            "bricklink",
+            {},
+        )
+    )
+
+    color_entry = (
+        bricklink_colors.get(
+            str(bricklink_color_id)
+        )
+    )
+
+    if not color_entry:
+
+        return bricklink_color_id
+
+    ldraw = color_entry.get(
+        "ldraw"
+    )
+
+    if not ldraw:
+
+        return bricklink_color_id
+
+    return ldraw["id"]
 
 # ------------------------------------------------------------
 # REBRICKABLE FALLBACK
@@ -661,25 +708,9 @@ def lookup_rebrickable_fallback(
         if not bl_color_ids:
             return None
 
-        ldraw_color_ids = (
-            color.get(
-                "external_ids",
-                {},
-            )
-            .get(
-                "LDraw",
-                {},
-            )
-            .get(
-                "ext_ids",
-                [],
-            )
-        )
-
         return {
             "bl_part_no": (bricklink_ids[0]),
             "bl_color_id": (bl_color_ids[0]),
-            "ldraw_color_id": (ldraw_color_ids[0] if ldraw_color_ids else 7),
             "bl_item_type": "PART",
             "source": ("rebrickable_fallback"),
         }
@@ -920,20 +951,9 @@ def build_canonical_db(results):
             bricklink_part
         )
 
-        studio_color = mapping.get(
-            "ldraw_color_id"
+        studio_color = resolve_studio_color(
+            mapping["bl_color_id"]
         )
-
-        #
-        # Fallback:
-        # use BrickLink color directly
-        #
-
-        if studio_color is None:
-
-            studio_color = mapping[
-                "bl_color_id"
-            ]
 
         canonical[element_id] = {
             "lego": {

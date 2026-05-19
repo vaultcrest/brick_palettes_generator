@@ -3,3 +3,4 @@ requests_oauthlib
 curl_cffi
 python-dotenv
 PyYAML
+beautifulsoup4
