@@ -6941,7 +6941,7 @@
     "source": "bricklink",
     "studio": {
       "color_id": 7,
-      "known_studio_part": false,
+      "known_studio_part": true,
       "part_file": "99206.dat"
     }
   },
@@ -11022,7 +11022,7 @@
       "item_type": "PART",
       "part_no": "973pb2346c01"
     },
-    "channel": "pab",
+    "channel": "bap",
     "lego": {
       "design_id": "76382",
       "element_id": "6153138",
@@ -11886,7 +11886,7 @@
     "source": "bricklink",
     "studio": {
       "color_id": 7,
-      "known_studio_part": false,
+      "known_studio_part": true,
       "part_file": "33291.dat"
     }
   },
@@ -16233,7 +16233,7 @@
     "source": "bricklink",
     "studio": {
       "color_id": 7,
-      "known_studio_part": false,
+      "known_studio_part": true,
       "part_file": "15470.dat"
     }
   },
@@ -38497,7 +38497,7 @@
     "source": "bricklink",
     "studio": {
       "color_id": 7,
-      "known_studio_part": false,
+      "known_studio_part": true,
       "part_file": "15470.dat"
     }
   },
@@ -50996,7 +50996,7 @@
       "item_type": "PART",
       "part_no": "973c008"
     },
-    "channel": "pab",
+    "channel": "bap",
     "lego": {
       "design_id": "76382",
       "element_id": "6478958",

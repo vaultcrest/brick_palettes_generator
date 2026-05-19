@@ -40,7 +40,7 @@ BL_TO_LEGO_CACHE_FILE = CACHE_DIR / "bricklink_to_lego.json"
 
 STUDIO_REFERENCE_FILE = CACHE_DIR / "studio_palette_reference.json"
 
-SNAPSHOT_FILE = CACHE_DIR / "bestseller_snapshot.json"
+SNAPSHOT_FILE = CACHE_DIR / "pab_snapshot.json"
 
 ITEM_TYPE_MAP = {
     "PART": "P",
@@ -271,7 +271,7 @@ def fetch_lego_inventory(
     per_page=400,
 ):
 
-    url = "https://www.lego.com/api/graphql/" "PickABrickQuery"
+    url = "https://www.lego.com/api/graphql/PickABrickQuery"
     headers = {
         "Referer": ("https://www.lego.com/" "en-us/pick-and-build/" "pick-a-brick"),
         "User-Agent": ("Mozilla/5.0"),
@@ -314,7 +314,9 @@ def fetch_lego_inventory(
             timeout=60,
         )
 
-        response.raise_for_status()
+        if response.status_code != 200:
+            print(response.text)
+            response.raise_for_status()
 
         data = response.json()
 
