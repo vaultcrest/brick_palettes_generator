@@ -32,7 +32,7 @@ using:
 
 ## Requirements
 
-- Python 3.11+
+- Python 3.14+
 - BrickLink API credentials
 - Rebrickable API key
 
@@ -43,7 +43,7 @@ using:
 ### Clone Repository
 
 ```bash
-git clone <repo>
+git clone git@github.com:sean-m-sullivan/brick_palettes_generator.git
 cd brick_pallete_generator
 ```
 

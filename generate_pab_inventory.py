@@ -29,11 +29,13 @@ CACHE_DIR.mkdir(exist_ok=True)
 
 DATA_DIR = Path("data")
 
-STUDIO_PALETTE_DIR = DATA_DIR / "studio_pallettes"
+STUDIO_PALETTE_DIR = DATA_DIR / "studio_palettes"
 
 CANONICAL_DB_FILE = CACHE_DIR / "canonical_mapping.json"
 
 FAILED_CACHE_FILE = CACHE_DIR / "failed_mappings.json"
+
+FAILED_LDRAW_CACHE_FILE = CACHE_DIR / "failed_ldraw_mappings.json"
 
 OVERRIDE_FILE = CACHE_DIR / "manual_overrides.yaml"
 
@@ -45,7 +47,7 @@ SNAPSHOT_FILE = CACHE_DIR / "pab_snapshot.json"
 
 COLOR_DATABASE_FILE = DATA_DIR / "color_database.json"
 
-FORCE_REFRESH = False
+FORCE_REFRESH = True
 
 ITEM_TYPE_MAP = {
     "PART": "P",
@@ -133,6 +135,9 @@ stats = {
     "incremental_skipped": 0,
     "incremental_updated": 0,
     "incremental_removed": 0,
+    "ldraw_resolved": 0,
+    "ldraw_failed": 0,
+    "ldraw_alternate_used": 0,
 }
 
 
@@ -231,6 +236,11 @@ failed_cache = load_json_file(
     {},
 )
 
+failed_ldraw_cache = load_json_file(
+    FAILED_LDRAW_CACHE_FILE,
+    {},
+)
+
 canonical_db = load_json_file(
     CANONICAL_DB_FILE,
     {},
@@ -245,7 +255,7 @@ color_database = load_json_file(
 
 print(f"Loaded color database: " f"{len(color_database.get('bricklink', {}))} " f"BrickLink colors")
 
-studio_reference = {}
+known_studio_parts = {}
 
 # ------------------------------------------------------------
 # Channel Priority for parts
@@ -274,7 +284,7 @@ def channel_priority(channel):
 
 def parse_studio_palette_reference():
 
-    global studio_reference
+    global known_studio_parts
 
     reference = {}
 
@@ -310,7 +320,7 @@ def parse_studio_palette_reference():
 
                 if line.startswith("0 "):
 
-                    current_part = line[2:]
+                    current_part = line[2:].lower()
 
                     if current_part not in reference:
 
@@ -322,11 +332,11 @@ def parse_studio_palette_reference():
 
                         reference[current_part]["seen_in"].append(palette_name)
 
-    studio_reference = reference
+    known_studio_parts = reference
 
     save_json_file(
         STUDIO_REFERENCE_FILE,
-        studio_reference,
+        known_studio_parts,
     )
 
     print(f"Loaded {len(reference)} studio refs")
@@ -550,11 +560,23 @@ def lookup_bricklink_mapping(
                 return None
 
             mapping = data["data"][0]
+
+            alternate_no = []
+
+            raw_alternate = mapping["item"].get("alternate_no")
+
+            if raw_alternate:
+
+                alternate_no = [part.strip() for part in raw_alternate.split(",") if part.strip()]
+
             stats["bricklink_success"] += 1
+
             return {
                 "bl_part_no": (mapping["item"]["no"]),
                 "bl_color_id": (mapping["color_id"]),
                 "bl_item_type": (mapping["item"]["type"]),
+                "bl_name": (mapping["item"].get("name")),
+                "bl_alternate_no": alternate_no,
                 "source": "bricklink",
             }
 
@@ -700,6 +722,8 @@ def lookup_rebrickable_fallback(
             "bl_part_no": (bricklink_ids[0]),
             "bl_color_id": (bl_color_ids[0]),
             "bl_item_type": "PART",
+            "bl_name": part.get("name"),
+            "bl_alternate_no": [],
             "source": ("rebrickable_fallback"),
         }
 
@@ -718,15 +742,88 @@ def lookup_rebrickable_fallback(
 # ------------------------------------------------------------
 
 
-def build_studio_part_file(
+def resolve_studio_part(
     bricklink_part,
+    alternate_parts,
 ):
 
-    if "pb" in bricklink_part or "pr" in bricklink_part:
+    #
+    # Resolution order:
+    #
+    # 1. Canonical BrickLink ID
+    # 2. Reverse alternate IDs
+    #
+    # Example:
+    #
+    # 98313
+    # -> 76116
+    # -> 49753
+    #
 
-        return f"bl_{bricklink_part}.dat"
+    candidate_parts = [
+        bricklink_part,
+    ]
 
-    return f"{bricklink_part}.dat"
+    candidate_parts.extend(list(reversed(alternate_parts)))
+
+    attempted = []
+
+    for candidate in candidate_parts:
+
+        part_file = (f"{candidate}.dat").lower()
+
+        attempted.append(part_file)
+
+        #
+        # Studio reference lookup
+        #
+
+        if part_file in known_studio_parts:
+
+            #
+            # Track alternate usage
+            #
+
+            if candidate != bricklink_part:
+
+                stats["ldraw_alternate_used"] += 1
+
+            stats["ldraw_resolved"] += 1
+
+            if DEBUG:
+
+                print(
+                    "Studio resolved:",
+                    bricklink_part,
+                    "->",
+                    part_file,
+                )
+
+            return {
+                "part_file": part_file,
+                "resolved_from": candidate,
+                "attempted": attempted,
+            }
+
+    #
+    # Resolution failed
+    #
+
+    stats["ldraw_failed"] += 1
+
+    if DEBUG:
+
+        print(
+            "Studio unresolved:",
+            bricklink_part,
+            attempted,
+        )
+
+    return {
+        "part_file": None,
+        "resolved_from": None,
+        "attempted": attempted,
+    }
 
 
 # ------------------------------------------------------------
@@ -882,7 +979,10 @@ def build_canonical_db(results):
 
         current_channel = get_channel(item)
 
-        current_price = item.get("price", {}).get(
+        current_price = item.get(
+            "price",
+            {},
+        ).get(
             "centAmount",
             0,
         )
@@ -906,6 +1006,7 @@ def build_canonical_db(results):
             if existing_price == current_price and existing_channel == current_channel and not FORCE_REFRESH:
 
                 stats["incremental_skipped"] += 1
+
                 stats["canonical_cache"] += 1
 
                 continue
@@ -919,29 +1020,115 @@ def build_canonical_db(results):
         if not mapping:
             continue
 
+        if element_id in failed_cache:
+
+            del failed_cache[element_id]
+
+            save_json_file(
+                FAILED_CACHE_FILE,
+                failed_cache,
+            )
+        #
+        # BrickLink canonical part
+        #
+
         bricklink_part = mapping["bl_part_no"]
 
-        studio_part = build_studio_part_file(bricklink_part)
+        #
+        # Alternate IDs
+        #
+
+        alternate_parts = mapping.get(
+            "bl_alternate_no",
+            [],
+        )
+
+        #
+        # Resolve Studio-compatible DAT
+        #
+
+        studio_resolution = resolve_studio_part(
+            bricklink_part,
+            alternate_parts,
+        )
+
+        studio_part = studio_resolution["part_file"]
+
+        #
+        # Failed Studio/LDraw resolution
+        #
+
+        if not studio_part:
+
+            failed_ldraw_cache[element_id] = {
+                "bricklink_part": (bricklink_part),
+                "alternate_no": (alternate_parts),
+                "attempted_parts": (studio_resolution["attempted"]),
+                "timestamp": time.time(),
+            }
+
+            save_json_file(
+                FAILED_LDRAW_CACHE_FILE,
+                failed_ldraw_cache,
+            )
+
+            continue
+
+        #
+        # Remove stale failed entries
+        #
+
+        if element_id in failed_ldraw_cache:
+
+            del failed_ldraw_cache[element_id]
+
+            save_json_file(
+                FAILED_LDRAW_CACHE_FILE,
+                failed_ldraw_cache,
+            )
+
+        #
+        # Resolve Studio/LDraw color
+        #
 
         studio_color = resolve_studio_color(mapping["bl_color_id"])
 
+        #
+        # Build canonical entry
+        #
+
         canonical[element_id] = {
+            #
+            # LEGO metadata
+            #
             "lego": {
-                "element_id": element_id,
-                "design_id": item.get("designId"),
-                "name": item.get("name"),
+                "element_id": (element_id),
+                "design_id": (item.get("designId")),
+                "name": (item.get("name")),
             },
+            #
+            # BrickLink canonical mapping
+            #
             "bricklink": {
-                "part_no": bricklink_part,
-                "color_id": mapping["bl_color_id"],
-                "item_type": mapping["bl_item_type"],
+                "part_no": (bricklink_part),
+                "alternate_no": (alternate_parts),
+                "name": (mapping.get("bl_name")),
+                "color_id": (mapping["bl_color_id"]),
+                "item_type": (mapping["bl_item_type"]),
             },
+            #
+            # Studio/LDraw mapping
+            #
             "studio": {
-                "part_file": studio_part,
-                "color_id": studio_color,
-                "known_studio_part": (studio_part in studio_reference),
+                "part_file": (studio_part),
+                "resolved_from": (studio_resolution["resolved_from"]),
+                "color_id": (studio_color),
+                "known_studio_part": (True),
             },
-            "channel": get_channel(item),
+            #
+            # LEGO metadata
+            #
+            "channel": (get_channel(item)),
             "price": {
                 "cent_amount": (
                     item.get(
@@ -962,7 +1149,10 @@ def build_canonical_db(results):
                     )
                 ),
             },
-            "source": mapping["source"],
+            #
+            # Mapping source
+            #
+            "source": (mapping["source"]),
         }
 
         stats["incremental_updated"] += 1
@@ -1079,10 +1269,13 @@ def build_palette(entries, name):
         "-1",
     ]
 
-    counts = {}
-
     #
-    # Count part/color combinations
+    # Emit palette entries directly
+    #
+    # Do NOT aggregate counts.
+    #
+    # Studio palettes behave better when
+    # each LEGO inventory entry is preserved.
     #
 
     for entry in entries:
@@ -1091,35 +1284,17 @@ def build_palette(entries, name):
 
         color_id = entry["studio"]["color_id"]
 
-        key = (
-            part_file,
-            color_id,
-        )
-
-        counts[key] = counts.get(key, 0) + 1
-
-    #
-    # Emit palette entries
-    #
-
-    for (
-        part_file,
-        color_id,
-    ), quantity in counts.items():
+        bricklink_name = entry["bricklink"]["name"]
 
         #
-        # Find example entry
+        # Palette entry
         #
-
-        example = next(entry for entry in entries if (entry["studio"]["part_file"] == part_file and entry["studio"]["color_id"] == color_id))
 
         lines.append(f"0 {part_file}")
 
-        lines.append(f"1 {example['lego']['name']}")
+        lines.append(f"1 {bricklink_name}")
 
         lines.append(f"2 {color_id}")
-
-        lines.append(f"4 {quantity}")
 
     return "\n".join(lines)
 
@@ -1259,6 +1434,11 @@ def main():
             failure["reason"],
         )
     print()
+
+    print(
+        "Failed LDraw mappings:",
+        len(failed_ldraw_cache),
+    )
 
     print("Lookup Statistics")
 
