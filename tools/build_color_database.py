@@ -1,270 +1,222 @@
 #!/usr/bin/env python3
 
-import ast
 import json
-import re
 from pathlib import Path
 
-from bs4 import BeautifulSoup
-from curl_cffi import requests
+# ------------------------------------------------------------
+# PATHS
+# ------------------------------------------------------------
 
 DATA_DIR = Path("data")
 
+STUDIO_COLOR_DEFINITION_FILE = DATA_DIR / "ldraw" / "CustomColorDefinition.txt"
+
 OUTPUT_FILE = DATA_DIR / "color_database.json"
 
-URL = "https://rebrickable.com/colors/"
+# ------------------------------------------------------------
+# HELPERS
+# ------------------------------------------------------------
 
 
-def parse_name_list(raw_names):
+def safe_int(value):
+
+    value = str(value).strip()
+
+    if not value:
+        return None
 
     try:
+        return int(value)
 
-        parsed = ast.literal_eval(raw_names)
-
-        if isinstance(parsed, list):
-
-            return parsed
-
-    except (
-        ValueError,
-        SyntaxError,
-    ):
-
-        pass
-
-    return [raw_names]
-
-
-def build_variant_entry(
-    source_id,
-    names,
-):
-
-    return {
-        "id": source_id,
-        "name": names[0],
-        "aliases": names[1:],
-    }
-
-
-def parse_multi_mapping(cell):
-
-    text = cell.get_text(
-        " ",
-        strip=True,
-    )
-
-    if not text:
+    except ValueError:
         return None
 
-    #
-    # Matches:
-    #
-    # 26 ['Black', 'BLACK']
-    # 342 ['CONDUCT. BLACK']
-    #
-    # 117 ['Transparent Glitter', 'TR.W.GLITTER']
-    # 122 ['Nature with Glitter']
-    #
-    matches = re.findall(
-        r"(\d+)\s+(\[[^\]]+\])",
-        text,
-    )
 
-    if not matches:
-        return None
-
-    parsed_entries = []
-
-    for raw_id, raw_names in matches:
-
-        names = parse_name_list(raw_names)
-
-        parsed_entries.append(
-            build_variant_entry(
-                int(raw_id),
-                names,
-            )
-        )
-
-    primary = parsed_entries[0]
-
-    return {
-        "id": primary["id"],
-        "name": primary["name"],
-        "aliases": primary["aliases"],
-        "variants": parsed_entries[1:],
-    }
-
-
-def find_colors_table(tables):
-
-    for i, table in enumerate(tables):
-
-        text = table.get_text(
-            " ",
-            strip=True,
-        )
-
-        print(f"\n=== TABLE {i} ===")
-
-        print(text[:500])
-
-        if "BrickLink" in text and "LDraw" in text:
-
-            print(f"\nUsing table {i}")
-
-            return table
-
-    return None
+# ------------------------------------------------------------
+# MAIN
+# ------------------------------------------------------------
 
 
 def build_color_database():
 
-    print(f"Fetching {URL}")
+    if not STUDIO_COLOR_DEFINITION_FILE.exists():
 
-    response = requests.get(
-        URL,
-        timeout=60,
-        impersonate="chrome124",
-        headers={
-            "User-Agent": ("Mozilla/5.0 " "(X11; Linux x86_64) " "AppleWebKit/537.36 " "(KHTML, like Gecko) " "Chrome/124.0.0.0 " "Safari/537.36"),
-            "Referer": ("https://rebrickable.com/"),
-        },
-    )
+        raise FileNotFoundError("Missing Studio color definition:\n" f"{STUDIO_COLOR_DEFINITION_FILE}")
 
-    response.raise_for_status()
-
-    print(f"HTTP {response.status_code}")
-
-    soup = BeautifulSoup(
-        response.text,
-        "html.parser",
-    )
-
-    tables = soup.find_all("table")
-
-    print(f"Found tables: " f"{len(tables)}")
-
-    table = find_colors_table(tables)
-
-    if not table:
-
-        raise RuntimeError("Could not find colors table")
-
-    rows = table.find_all("tr")
-
-    print(f"Found rows: " f"{len(rows)}")
+    print("Loading Studio color definitions")
 
     color_database = {
-        "rebrickable": {},
+        #
+        # Primary canonical mappings
+        #
+        "studio": {},
         "bricklink": {},
         "ldraw": {},
         "lego": {},
-        "brickowl": {},
+        #
+        # Material/special variants
+        #
+        "studio_variants": {},
     }
 
-    for row in rows:
-
-        cols = row.find_all("td")
-
-        if len(cols) < 12:
-            continue
-
-        #
-        # Column layout:
-        #
-        # 0 = image
-        # 1 = rebrickable id
-        # 2 = name
-        # 3 = rgb
-        # 4 = num parts
-        # 5 = num sets
-        # 6 = first year
-        # 7 = last year
-        # 8 = LEGO
-        # 9 = LDraw
-        # 10 = BrickLink
-        # 11 = BrickOwl
-        #
-
-        try:
-
-            rebrickable_id = int(cols[1].get_text(strip=True))
-
-        except ValueError:
-
-            continue
-
-        name = cols[2].get_text(strip=True)
-
-        rgb = cols[3].get_text(strip=True)
-
-        lego = parse_multi_mapping(cols[8])
-
-        ldraw = parse_multi_mapping(cols[9])
-
-        bricklink = parse_multi_mapping(cols[10])
-
-        brickowl = parse_multi_mapping(cols[11])
-
-        entry = {
-            "rebrickable": {
-                "id": rebrickable_id,
-                "name": name,
-            },
-            "rgb": rgb,
-            "lego": lego,
-            "ldraw": ldraw,
-            "bricklink": bricklink,
-            "brickowl": brickowl,
-        }
+    with open(
+        STUDIO_COLOR_DEFINITION_FILE,
+        encoding="utf-8",
+        errors="ignore",
+    ) as f:
 
         #
-        # Rebrickable
+        # Skip header
         #
 
-        color_database["rebrickable"][str(rebrickable_id)] = entry
+        next(f)
 
-        #
-        # LEGO
-        #
+        for line in f:
 
-        if lego:
+            line = line.strip()
 
-            color_database["lego"][str(lego["id"])] = entry
+            if not line:
+                continue
 
-            for variant in lego["variants"]:
+            #
+            # Tab-delimited
+            #
 
-                color_database["lego"][str(variant["id"])] = entry
+            parts = line.split("\t")
 
-        #
-        # LDraw
-        #
+            #
+            # Expected columns:
+            #
+            # 0 Studio Color Code
+            # 1 BL Color Code
+            # 2 LDraw Color Code
+            # 3 LDD Color Code
+            # 4 Studio Color Name
+            # 5 BL Color Name
+            # 6 LDraw Color Name
+            # 7 LDD Color Name
+            #
 
-        if ldraw:
+            if len(parts) < 8:
+                continue
 
-            color_database["ldraw"][str(ldraw["id"])] = entry
+            studio_color_id = safe_int(parts[0])
 
-            for variant in ldraw["variants"]:
+            bricklink_color_id = safe_int(parts[1])
 
-                color_database["ldraw"][str(variant["id"])] = entry
+            ldraw_color_id = safe_int(parts[2])
 
-        #
-        # BrickLink
-        #
+            lego_color_id = safe_int(parts[3])
 
-        if bricklink:
+            studio_name = parts[4].strip()
 
-            color_database["bricklink"][str(bricklink["id"])] = entry
+            bricklink_name = parts[5].strip()
 
-        #
-        # BrickOwl
-        #
+            ldraw_name = parts[6].strip()
 
-        if brickowl:
+            lego_name = parts[7].strip()
 
-            color_database["brickowl"][str(brickowl["id"])] = entry
+            entry = {
+                "studio": {
+                    "id": (studio_color_id),
+                    "name": (studio_name),
+                },
+                "bricklink": {
+                    "id": (bricklink_color_id),
+                    "name": (bricklink_name),
+                },
+                "ldraw": {
+                    "id": (ldraw_color_id),
+                    "name": (ldraw_name),
+                },
+                "lego": {
+                    "id": (lego_color_id),
+                    "name": (lego_name),
+                },
+            }
+
+            #
+            # Studio color index
+            #
+            # Studio IDs are unique,
+            # including material variants.
+            #
+
+            if studio_color_id is not None:
+
+                color_database["studio"][str(studio_color_id)] = entry
+
+            #
+            # BrickLink canonical index
+            #
+            # IMPORTANT:
+            # Keep FIRST occurrence only.
+            #
+            # Later entries are usually:
+            # - Rubber
+            # - Chrome
+            # - Pearl
+            # - Glitter
+            # - Metallic
+            #
+            # We do NOT want those
+            # overwriting canonical colors.
+            #
+
+            if bricklink_color_id is not None:
+
+                bl_key = str(bricklink_color_id)
+
+                if bl_key not in color_database["bricklink"]:
+
+                    color_database["bricklink"][bl_key] = entry
+
+            #
+            # LDraw canonical index
+            #
+
+            if ldraw_color_id is not None:
+
+                ldraw_key = str(ldraw_color_id)
+
+                if ldraw_key not in color_database["ldraw"]:
+
+                    color_database["ldraw"][ldraw_key] = entry
+
+            #
+            # LEGO/LDD canonical index
+            #
+
+            if lego_color_id is not None:
+
+                lego_key = str(lego_color_id)
+
+                if lego_key not in color_database["lego"]:
+
+                    color_database["lego"][lego_key] = entry
+
+            #
+            # Store ALL Studio variants
+            #
+            # Examples:
+            # - Rubber
+            # - Chrome
+            # - Pearl
+            # - Metallic
+            # - Glitter
+            # - Glow
+            # - Satin
+            #
+
+            if bricklink_color_id is not None and studio_color_id is not None:
+
+                variant_key = f"{bricklink_color_id}_" f"{studio_color_id}"
+
+                color_database["studio_variants"][variant_key] = entry
+
+    #
+    # Save
+    #
 
     OUTPUT_FILE.parent.mkdir(
         parents=True,
@@ -284,9 +236,19 @@ def build_color_database():
             sort_keys=True,
         )
 
-    print(f"\nSaved color database: " f"{OUTPUT_FILE}")
+    #
+    # Summary
+    #
 
-    print(f"Rebrickable colors: " f"{len(color_database['rebrickable'])}")
+    print()
+
+    print("Saved color database:")
+
+    print(OUTPUT_FILE)
+
+    print()
+
+    print(f"Studio colors: " f"{len(color_database['studio'])}")
 
     print(f"BrickLink colors: " f"{len(color_database['bricklink'])}")
 
@@ -294,7 +256,12 @@ def build_color_database():
 
     print(f"LEGO colors: " f"{len(color_database['lego'])}")
 
-    print(f"BrickOwl colors: " f"{len(color_database['brickowl'])}")
+    print(f"Studio variants: " f"{len(color_database['studio_variants'])}")
+
+
+# ------------------------------------------------------------
+# ENTRY
+# ------------------------------------------------------------
 
 
 if __name__ == "__main__":

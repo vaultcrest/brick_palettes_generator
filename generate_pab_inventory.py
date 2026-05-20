@@ -29,7 +29,7 @@ CACHE_DIR.mkdir(exist_ok=True)
 
 DATA_DIR = Path("data")
 
-STUDIO_PALETTE_DIR = DATA_DIR / "studio_palettes"
+LDRAW_INDEX_FILE = DATA_DIR / "ldraw" / "part_index.json"
 
 CANONICAL_DB_FILE = CACHE_DIR / "canonical_mapping.json"
 
@@ -41,13 +41,11 @@ OVERRIDE_FILE = CACHE_DIR / "manual_overrides.yaml"
 
 BL_TO_LEGO_CACHE_FILE = CACHE_DIR / "bricklink_to_lego.json"
 
-STUDIO_REFERENCE_FILE = CACHE_DIR / "studio_palette_reference.json"
-
 SNAPSHOT_FILE = CACHE_DIR / "pab_snapshot.json"
 
 COLOR_DATABASE_FILE = DATA_DIR / "color_database.json"
 
-FORCE_REFRESH = True
+FORCE_REFRESH = False
 
 ITEM_TYPE_MAP = {
     "PART": "P",
@@ -222,6 +220,84 @@ def save_json_file(path, data):
         )
 
 
+def fetch_bricklink_item_metadata(
+    item_type,
+    part_no,
+):
+
+    api_item_type = ITEM_TYPE_MAP.get(
+        item_type,
+        item_type,
+    )
+
+    url = "https://api.bricklink.com/api/store/v1/items/" f"{api_item_type}/{part_no}"
+
+    try:
+
+        response = requests.get(
+            url,
+            auth=auth,
+            timeout=30,
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        if data["meta"]["code"] != 200:
+
+            return {}
+
+        item = data["data"]
+
+        alternate_no = []
+
+        raw_alternate = item.get("alternate_no")
+
+        if raw_alternate:
+
+            alternate_no = [part.strip() for part in raw_alternate.split(",") if part.strip()]
+
+        return {
+            "name": item.get("name"),
+            "alternate_no": alternate_no,
+        }
+
+    except requests.HTTPError as e:
+
+        status = getattr(
+            e.response,
+            "status_code",
+            None,
+        )
+
+        #
+        # Many valid catalog items
+        # do not resolve through
+        # metadata endpoint.
+        #
+
+        if status == 400:
+
+            return {}
+
+        print(
+            "BrickLink metadata lookup failed:",
+            e,
+        )
+
+        return {}
+
+    except Exception as e:
+
+        print(
+            "BrickLink metadata lookup failed:",
+            e,
+        )
+
+        return {}
+
+
 # ------------------------------------------------------------
 # LOAD STATE
 # ------------------------------------------------------------
@@ -255,7 +331,25 @@ color_database = load_json_file(
 
 print(f"Loaded color database: " f"{len(color_database.get('bricklink', {}))} " f"BrickLink colors")
 
-known_studio_parts = {}
+ldraw_index = {}
+
+known_ldraw_parts = set()
+
+
+def load_ldraw_index():
+
+    global ldraw_index
+    global known_ldraw_parts
+
+    ldraw_index = load_json_file(
+        LDRAW_INDEX_FILE,
+        {},
+    )
+
+    known_ldraw_parts = set(part.lower() for part in ldraw_index.keys())
+
+    print(f"Loaded " f"{len(known_ldraw_parts)} " f"LDraw parts")
+
 
 # ------------------------------------------------------------
 # Channel Priority for parts
@@ -275,71 +369,6 @@ def channel_priority(channel):
         str(channel).lower(),
         0,
     )
-
-
-# ------------------------------------------------------------
-# STUDIO PALETTE REFERENCE PARSER
-# ------------------------------------------------------------
-
-
-def parse_studio_palette_reference():
-
-    global known_studio_parts
-
-    reference = {}
-
-    if not STUDIO_PALETTE_DIR.exists():
-
-        print("No studio palette dir")
-
-        return {}
-
-    for palette_file in sorted(STUDIO_PALETTE_DIR.iterdir()):
-
-        if not palette_file.is_file():
-            continue
-
-        palette_name = palette_file.name
-
-        print(f"Parsing studio palette {palette_name}")
-
-        current_part = None
-
-        with open(
-            palette_file,
-            encoding="utf-8",
-            errors="ignore",
-        ) as f:
-
-            for raw_line in f:
-
-                line = raw_line.strip()
-
-                if not line:
-                    continue
-
-                if line.startswith("0 "):
-
-                    current_part = line[2:].lower()
-
-                    if current_part not in reference:
-
-                        reference[current_part] = {
-                            "seen_in": [],
-                        }
-
-                    if palette_name not in reference[current_part]["seen_in"]:
-
-                        reference[current_part]["seen_in"].append(palette_name)
-
-    known_studio_parts = reference
-
-    save_json_file(
-        STUDIO_REFERENCE_FILE,
-        known_studio_parts,
-    )
-
-    print(f"Loaded {len(reference)} studio refs")
 
 
 # ------------------------------------------------------------
@@ -561,22 +590,26 @@ def lookup_bricklink_mapping(
 
             mapping = data["data"][0]
 
-            alternate_no = []
+            item_type = mapping["item"]["type"]
 
-            raw_alternate = mapping["item"].get("alternate_no")
+            part_no = mapping["item"]["no"]
 
-            if raw_alternate:
-
-                alternate_no = [part.strip() for part in raw_alternate.split(",") if part.strip()]
+            metadata = fetch_bricklink_item_metadata(
+                item_type,
+                part_no,
+            )
 
             stats["bricklink_success"] += 1
 
             return {
-                "bl_part_no": (mapping["item"]["no"]),
-                "bl_color_id": (mapping["color_id"]),
-                "bl_item_type": (mapping["item"]["type"]),
-                "bl_name": (mapping["item"].get("name")),
-                "bl_alternate_no": alternate_no,
+                "bl_part_no": part_no,
+                "bl_color_id": mapping["color_id"],
+                "bl_item_type": item_type,
+                "bl_name": metadata.get("name"),
+                "bl_alternate_no": metadata.get(
+                    "alternate_no",
+                    [],
+                ),
                 "source": "bricklink",
             }
 
@@ -778,7 +811,7 @@ def resolve_studio_part(
         # Studio reference lookup
         #
 
-        if part_file in known_studio_parts:
+        if part_file in known_ldraw_parts:
 
             #
             # Track alternate usage
@@ -1058,11 +1091,15 @@ def build_canonical_db(results):
         # Failed Studio/LDraw resolution
         #
 
+        studio_supported = True
+
         if not studio_part:
 
+            studio_supported = False
+
             failed_ldraw_cache[element_id] = {
-                "bricklink_part": (bricklink_part),
-                "alternate_no": (alternate_parts),
+                "bricklink_part": bricklink_part,
+                "alternate_no": alternate_parts,
                 "attempted_parts": (studio_resolution["attempted"]),
                 "timestamp": time.time(),
             }
@@ -1071,8 +1108,6 @@ def build_canonical_db(results):
                 FAILED_LDRAW_CACHE_FILE,
                 failed_ldraw_cache,
             )
-
-            continue
 
         #
         # Remove stale failed entries
@@ -1120,10 +1155,10 @@ def build_canonical_db(results):
             # Studio/LDraw mapping
             #
             "studio": {
-                "part_file": (studio_part),
+                "part_file": studio_part,
                 "resolved_from": (studio_resolution["resolved_from"]),
-                "color_id": (studio_color),
-                "known_studio_part": (True),
+                "color_id": (studio_color if studio_supported else None),
+                "known_studio_part": (studio_supported),
             },
             #
             # LEGO metadata
@@ -1169,6 +1204,12 @@ def build_canonical_db(results):
 
         del canonical[stale_id]
 
+        if stale_id in failed_cache:
+            del failed_cache[stale_id]
+
+        if stale_id in failed_ldraw_cache:
+            del failed_ldraw_cache[stale_id]
+
     stats["incremental_removed"] += len(stale_ids)
 
     print(f"Removed stale entries: " f"{len(stale_ids)}")
@@ -1178,6 +1219,16 @@ def build_canonical_db(results):
     save_json_file(
         CANONICAL_DB_FILE,
         canonical_db,
+    )
+
+    save_json_file(
+        FAILED_CACHE_FILE,
+        failed_cache,
+    )
+
+    save_json_file(
+        FAILED_LDRAW_CACHE_FILE,
+        failed_ldraw_cache,
     )
 
     print(f"Saved canonical DB: " f"{len(canonical_db)} entries")
@@ -1279,6 +1330,9 @@ def build_palette(entries, name):
     #
 
     for entry in entries:
+
+        if not entry["studio"]["known_studio_part"]:
+            continue
 
         part_file = entry["studio"]["part_file"]
 
@@ -1411,7 +1465,7 @@ def rebuild_reverse_index():
 
 def main():
 
-    parse_studio_palette_reference()
+    load_ldraw_index()
 
     print("Fetching LEGO inventory")
 

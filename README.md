@@ -352,6 +352,17 @@ git commit -m "Update Pick a Brick inventory"
 
 ---
 
+## Studio Files used
+
+This project uses Studio's internal files:
+
+```text
+C:\Program Files\Studio 2.0\data\elementInfoList.json
+C:\Program Files\Studio 2.0\data\InvalidPartMap.xml
+C:\Program Files\Studio 2.0\data\CustomColorDefinition.txt
+```
+
+
 ## Troubleshooting
 
 ### BrickLink 429 / Rate Limited
