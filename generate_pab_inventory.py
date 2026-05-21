@@ -35,7 +35,9 @@ CANONICAL_DB_FILE = CACHE_DIR / "canonical_mapping.json"
 
 FAILED_CACHE_FILE = CACHE_DIR / "failed_mappings.json"
 
-FAILED_LDRAW_CACHE_FILE = CACHE_DIR / "failed_ldraw_mappings.json"
+FAILED_STUDIO_CACHE_FILE = CACHE_DIR / "failed_studio_mappings.json"
+
+MISSING_COLOR_MAPPING_FILE = CACHE_DIR / "missing_color_mappings.json"
 
 OVERRIDE_FILE = CACHE_DIR / "manual_overrides.yaml"
 
@@ -45,6 +47,8 @@ SNAPSHOT_FILE = CACHE_DIR / "pab_snapshot.json"
 
 COLOR_DATABASE_FILE = DATA_DIR / "color_database.json"
 
+STUDIO_PALETTE_DIR = DATA_DIR / "studio_palettes"
+
 FORCE_REFRESH = False
 
 ITEM_TYPE_MAP = {
@@ -52,6 +56,8 @@ ITEM_TYPE_MAP = {
     "MINIFIG": "M",
     "SET": "S",
 }
+
+INVALID_PART_MAP_FILE = DATA_DIR / "ldraw" / "InvalidPartMap.xml"
 
 # ------------------------------------------------------------
 # AUTH
@@ -133,9 +139,11 @@ stats = {
     "incremental_skipped": 0,
     "incremental_updated": 0,
     "incremental_removed": 0,
+    "studio_unresolved": 0,
+    "studio_invalid_replacement": 0,
+    "studio_palette_resolved": 0,
     "ldraw_resolved": 0,
-    "ldraw_failed": 0,
-    "ldraw_alternate_used": 0,
+    "missing_color_mapping": 0,
 }
 
 
@@ -312,10 +320,12 @@ failed_cache = load_json_file(
     {},
 )
 
-failed_ldraw_cache = load_json_file(
-    FAILED_LDRAW_CACHE_FILE,
+failed_studio_cache = load_json_file(
+    FAILED_STUDIO_CACHE_FILE,
     {},
 )
+
+missing_color_mappings = {}
 
 canonical_db = load_json_file(
     CANONICAL_DB_FILE,
@@ -335,6 +345,12 @@ ldraw_index = {}
 
 known_ldraw_parts = set()
 
+known_studio_parts = set()
+
+known_parts = {}
+
+invalid_part_map = {}
+
 
 def load_ldraw_index():
 
@@ -348,7 +364,139 @@ def load_ldraw_index():
 
     known_ldraw_parts = set(part.lower() for part in ldraw_index.keys())
 
+    for part_file in known_ldraw_parts:
+
+        known_parts.setdefault(
+            part_file,
+            {},
+        )["ldraw"] = True
+
     print(f"Loaded " f"{len(known_ldraw_parts)} " f"LDraw parts")
+
+
+def load_studio_palettes():
+
+    global known_studio_parts
+    global known_parts
+
+    if not STUDIO_PALETTE_DIR.exists():
+
+        print("Missing studio palette dir:")
+
+        print(STUDIO_PALETTE_DIR)
+
+        return
+
+    palette_files = sorted(path for path in STUDIO_PALETTE_DIR.iterdir() if (path.is_file() and not path.name.startswith(".")))
+
+    studio_parts = set()
+
+    for palette_file in palette_files:
+
+        if not palette_file.is_file():
+            continue
+
+        try:
+
+            with open(
+                palette_file,
+                encoding="utf-8",
+                errors="ignore",
+            ) as f:
+
+                for line in f:
+
+                    line = line.strip()
+
+                    #
+                    # Palette DAT line
+                    #
+
+                    if not line.startswith("0 "):
+                        continue
+
+                    dat_file = line[2:].strip().lower()
+
+                    if not dat_file.endswith(".dat"):
+                        continue
+
+                    #
+                    # Exact Studio entry
+                    #
+
+                    studio_parts.add(dat_file)
+
+                    #
+                    # Normalize bl_
+                    #
+                    # Example:
+                    # bl_3069pb1265.dat
+                    # -> 3069pb1265.dat
+                    #
+
+                    if dat_file.startswith("bl_"):
+
+                        stripped = dat_file[3:]
+
+                        studio_parts.add(stripped)
+
+        except Exception as e:
+
+            print(f"Failed reading " f"{palette_file}: {e}")
+
+    known_studio_parts = studio_parts
+
+    #
+    # Merge into unified known_parts
+    #
+
+    for part_file in known_studio_parts:
+
+        known_parts.setdefault(
+            part_file,
+            {},
+        )["studio"] = True
+
+    print(f"Loaded " f"{len(known_studio_parts)} " f"Studio palette parts")
+
+
+def load_invalid_part_map():
+
+    global invalid_part_map
+
+    if not INVALID_PART_MAP_FILE.exists():
+
+        print("Missing InvalidPartMap:")
+
+        print(INVALID_PART_MAP_FILE)
+
+        return
+
+    tree = ET.parse(INVALID_PART_MAP_FILE)
+
+    root = tree.getroot()
+
+    mapping = {}
+
+    for item in root.findall(".//InvalidPart"):
+
+        source = (item.findtext("source") or "").strip().lower()
+
+        replacement = (item.findtext("replacement") or "").strip().lower()
+
+        bl_item_no = (item.findtext("BLItemNo") or "").strip()
+
+        if not source:
+            continue
+
+        mapping[source] = {
+            "replacement": replacement,
+            "bricklink_part": (bl_item_no),
+        }
+
+    invalid_part_map = mapping
+
+    print(f"Loaded " f"{len(invalid_part_map)} " f"invalid part mappings")
 
 
 # ------------------------------------------------------------
@@ -665,13 +813,36 @@ def resolve_studio_color(
 
     color_entry = bricklink_colors.get(str(bricklink_color_id))
 
+    #
+    # Missing BL color mapping
+    #
+
     if not color_entry:
+
+        stats["missing_color_mapping"] += 1
+
+        missing_color_mappings[str(bricklink_color_id)] = {
+            "bricklink_color_id": (bricklink_color_id),
+            "reason": ("missing_color_entry"),
+        }
 
         return bricklink_color_id
 
     ldraw = color_entry.get("ldraw")
 
+    #
+    # Missing LDraw mapping
+    #
+
     if not ldraw:
+
+        stats["missing_color_mapping"] += 1
+
+        missing_color_mappings[str(bricklink_color_id)] = {
+            "bricklink_color_id": (bricklink_color_id),
+            "reason": ("missing_ldraw_mapping"),
+            "color_entry": (color_entry),
+        }
 
         return bricklink_color_id
 
@@ -793,11 +964,53 @@ def resolve_studio_part(
     # -> 49753
     #
 
-    candidate_parts = [
-        bricklink_part,
-    ]
+    candidate_parts = []
+    candidate_methods = {}
+    #
+    # 1. Canonical BL part
+    #
 
-    candidate_parts.extend(list(reversed(alternate_parts)))
+    candidate_parts.append(bricklink_part)
+
+    candidate_methods[bricklink_part.lower()] = "canonical"
+
+    #
+    # 2. Reverse alternates
+    #
+
+    reverse_alternates = list(reversed(alternate_parts))
+
+    candidate_parts.extend(reverse_alternates)
+
+    for alternate in reverse_alternates:
+
+        candidate_methods[alternate.lower()] = "alternate"
+
+    #
+    # 3. Studio invalid replacement
+    #
+
+    canonical_dat = (f"{bricklink_part}.dat").lower()
+
+    invalid_mapping = invalid_part_map.get(canonical_dat)
+
+    if invalid_mapping:
+
+        replacement = invalid_mapping.get("replacement")
+
+        if replacement:
+
+            replacement_part = replacement.removesuffix(".dat")
+
+            candidate_parts.append(replacement_part)
+
+            candidate_methods[replacement_part.lower()] = "invalid_replacement"
+
+    #
+    # Deduplicate while preserving order
+    #
+
+    candidate_parts = list(dict.fromkeys(candidate_parts))
 
     attempted = []
 
@@ -808,33 +1021,49 @@ def resolve_studio_part(
         attempted.append(part_file)
 
         #
-        # Studio reference lookup
+        # Studio palettes are PRIMARY
+        # LDraw is SECONDARY
         #
 
-        if part_file in known_ldraw_parts:
+        part_sources = known_parts.get(
+            part_file,
+            {},
+        )
 
-            #
-            # Track alternate usage
-            #
+        source_type = None
 
-            if candidate != bricklink_part:
+        if part_sources.get("studio"):
 
-                stats["ldraw_alternate_used"] += 1
+            source_type = "studio_palette"
 
-            stats["ldraw_resolved"] += 1
+        elif part_sources.get("ldraw"):
 
-            if DEBUG:
+            source_type = "ldraw"
 
-                print(
-                    "Studio resolved:",
-                    bricklink_part,
-                    "->",
-                    part_file,
-                )
+        if source_type:
+
+            if source_type == "studio_palette":
+
+                stats["studio_palette_resolved"] += 1
+
+            elif source_type == "ldraw":
+
+                stats["ldraw_resolved"] += 1
+
+            resolution_method = candidate_methods.get(
+                candidate.lower(),
+                "unknown",
+            )
+
+            if resolution_method == "invalid_replacement":
+
+                stats["studio_invalid_replacement"] += 1
 
             return {
                 "part_file": part_file,
+                "source_type": source_type,
                 "resolved_from": candidate,
+                "resolution_method": (resolution_method),
                 "attempted": attempted,
             }
 
@@ -842,7 +1071,7 @@ def resolve_studio_part(
     # Resolution failed
     #
 
-    stats["ldraw_failed"] += 1
+    stats["studio_unresolved"] += 1
 
     if DEBUG:
 
@@ -854,7 +1083,9 @@ def resolve_studio_part(
 
     return {
         "part_file": None,
+        "source_type": None,
         "resolved_from": None,
+        "resolution_method": None,
         "attempted": attempted,
     }
 
@@ -1086,6 +1317,11 @@ def build_canonical_db(results):
         )
 
         studio_part = studio_resolution["part_file"]
+        #
+        # Resolve Studio/LDraw color
+        #
+
+        studio_color = resolve_studio_color(mapping["bl_color_id"])
 
         #
         # Failed Studio/LDraw resolution
@@ -1097,36 +1333,29 @@ def build_canonical_db(results):
 
             studio_supported = False
 
-            failed_ldraw_cache[element_id] = {
-                "bricklink_part": bricklink_part,
-                "alternate_no": alternate_parts,
+            failed_studio_cache[element_id] = {
+                "bricklink_part": (bricklink_part),
+                "alternate_no": (alternate_parts),
                 "attempted_parts": (studio_resolution["attempted"]),
+                "resolution_candidates": ([bricklink_part] + alternate_parts),
+                "original_part": (bricklink_part),
+                "bricklink_color_id": (mapping["bl_color_id"]),
+                "studio_color_id": (studio_color),
                 "timestamp": time.time(),
             }
-
-            save_json_file(
-                FAILED_LDRAW_CACHE_FILE,
-                failed_ldraw_cache,
-            )
 
         #
         # Remove stale failed entries
         #
 
-        if element_id in failed_ldraw_cache:
+        elif element_id in failed_studio_cache:
 
-            del failed_ldraw_cache[element_id]
+            del failed_studio_cache[element_id]
 
             save_json_file(
-                FAILED_LDRAW_CACHE_FILE,
-                failed_ldraw_cache,
+                FAILED_STUDIO_CACHE_FILE,
+                failed_studio_cache,
             )
-
-        #
-        # Resolve Studio/LDraw color
-        #
-
-        studio_color = resolve_studio_color(mapping["bl_color_id"])
 
         #
         # Build canonical entry
@@ -1157,8 +1386,10 @@ def build_canonical_db(results):
             "studio": {
                 "part_file": studio_part,
                 "resolved_from": (studio_resolution["resolved_from"]),
-                "color_id": (studio_color if studio_supported else None),
-                "known_studio_part": (studio_supported),
+                "resolution_method": (studio_resolution.get("resolution_method")),
+                "source_type": (studio_resolution.get("source_type")),
+                "color_id": studio_color,
+                "resolved": (studio_supported),
             },
             #
             # LEGO metadata
@@ -1207,8 +1438,8 @@ def build_canonical_db(results):
         if stale_id in failed_cache:
             del failed_cache[stale_id]
 
-        if stale_id in failed_ldraw_cache:
-            del failed_ldraw_cache[stale_id]
+        if stale_id in failed_studio_cache:
+            del failed_studio_cache[stale_id]
 
     stats["incremental_removed"] += len(stale_ids)
 
@@ -1227,10 +1458,13 @@ def build_canonical_db(results):
     )
 
     save_json_file(
-        FAILED_LDRAW_CACHE_FILE,
-        failed_ldraw_cache,
+        FAILED_STUDIO_CACHE_FILE,
+        failed_studio_cache,
     )
-
+    save_json_file(
+        MISSING_COLOR_MAPPING_FILE,
+        missing_color_mappings,
+    )
     print(f"Saved canonical DB: " f"{len(canonical_db)} entries")
 
 
@@ -1331,14 +1565,14 @@ def build_palette(entries, name):
 
     for entry in entries:
 
-        if not entry["studio"]["known_studio_part"]:
+        if not entry["studio"]["resolved"]:
             continue
 
         part_file = entry["studio"]["part_file"]
 
         color_id = entry["studio"]["color_id"]
 
-        bricklink_name = entry["bricklink"]["name"]
+        bricklink_name = entry["bricklink"]["name"] or part_file
 
         #
         # Palette entry
@@ -1356,6 +1590,83 @@ def build_palette(entries, name):
 # ------------------------------------------------------------
 # EXPORTS
 # ------------------------------------------------------------
+def export_failed_studio_review():
+    seen = set()
+    if not failed_studio_cache:
+
+        return
+
+    inventory = ET.Element("INVENTORY")
+
+    for entry in failed_studio_cache.values():
+        key = (
+            entry["original_part"],
+            entry.get(
+                "bricklink_color_id",
+                1,
+            ),
+        )
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+        item = ET.SubElement(
+            inventory,
+            "ITEM",
+        )
+
+        ET.SubElement(
+            item,
+            "ITEMTYPE",
+        ).text = "P"
+
+        ET.SubElement(
+            item,
+            "ITEMID",
+        ).text = entry["original_part"]
+
+        ET.SubElement(
+            item,
+            "COLOR",
+        ).text = str(
+            entry.get(
+                "bricklink_color_id",
+                1,
+            )
+        )
+        ET.SubElement(
+            item,
+            "REMARKS",
+        ).text = "Attempts: " + ", ".join(
+            entry.get(
+                "attempted_parts",
+                [],
+            )
+        )
+        ET.SubElement(
+            item,
+            "MINQTY",
+        ).text = "1"
+
+    xml_bytes = ET.tostring(
+        inventory,
+        encoding="utf-8",
+    )
+
+    xml_str = minidom.parseString(xml_bytes).toprettyxml(indent="  ")
+
+    output_path = OUTPUT_DIR / "failed_studio_review.xml"
+
+    with open(
+        output_path,
+        "w",
+        encoding="utf-8",
+    ) as f:
+
+        f.write("\n".join(line for line in xml_str.splitlines() if line.strip()))
+
+    print("Saved failed Studio review XML")
 
 
 def export_outputs():
@@ -1442,7 +1753,8 @@ def rebuild_reverse_index():
         element_id,
         entry,
     ) in canonical_db.items():
-
+        if not entry["studio"]["resolved"]:
+            continue
         key = f"{entry['bricklink']['part_no']}" f"|{entry['bricklink']['color_id']}" f"|{entry['bricklink']['item_type']}"
 
         if key not in reverse:
@@ -1467,6 +1779,10 @@ def main():
 
     load_ldraw_index()
 
+    load_studio_palettes()
+
+    load_invalid_part_map()
+
     print("Fetching LEGO inventory")
 
     results = fetch_lego_inventory()
@@ -1478,7 +1794,7 @@ def main():
     rebuild_reverse_index()
 
     export_outputs()
-
+    export_failed_studio_review()
     print(f"Temporary failures: {len(temporary_failures)}")
 
     for failure in temporary_failures:
@@ -1490,8 +1806,8 @@ def main():
     print()
 
     print(
-        "Failed LDraw mappings:",
-        len(failed_ldraw_cache),
+        "Failed Studio mappings:",
+        len(failed_studio_cache),
     )
 
     print("Lookup Statistics")
