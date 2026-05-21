@@ -214,8 +214,10 @@ def load_json_file(path, default):
 
 def save_json_file(path, data):
 
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+
     with open(
-        path,
+        temp_path,
         "w",
         encoding="utf-8",
     ) as f:
@@ -227,19 +229,15 @@ def save_json_file(path, data):
             sort_keys=True,
         )
 
+    temp_path.replace(path)
+
 
 def fetch_bricklink_item_metadata(
     item_type,
     part_no,
 ):
 
-    api_item_type = ITEM_TYPE_MAP.get(
-        item_type,
-        item_type,
-    )
-
-    url = "https://api.bricklink.com/api/store/v1/items/" f"{api_item_type}/{part_no}"
-
+    url = "https://api.bricklink.com/api/store/v1/items/" f"{item_type}/{part_no}"
     try:
 
         response = requests.get(
@@ -264,8 +262,13 @@ def fetch_bricklink_item_metadata(
 
         if raw_alternate:
 
-            alternate_no = [part.strip() for part in raw_alternate.split(",") if part.strip()]
+            if isinstance(raw_alternate, str):
 
+                alternate_no = [part.strip() for part in raw_alternate.split(",") if part.strip()]
+
+            elif isinstance(raw_alternate, list):
+
+                alternate_no = [str(part).strip() for part in raw_alternate if str(part).strip()]
         return {
             "name": item.get("name"),
             "alternate_no": alternate_no,
@@ -653,7 +656,7 @@ def fetch_lego_inventory(
 
         page += 1
 
-        time.sleep(0.10)
+        time.sleep(0.05)
 
     #
     # Deduplicate by LEGO element ID
@@ -806,11 +809,22 @@ def resolve_studio_color(
     bricklink_color_id,
 ):
 
+    #
+    # Invalid / placeholder color
+    #
+
+    if (
+        bricklink_color_id is None
+        or bricklink_color_id == 0
+        or str(bricklink_color_id) == "0"
+    ):
+
+        return 0
+
     bricklink_colors = color_database.get(
         "bricklink",
         {},
     )
-
     color_entry = bricklink_colors.get(str(bricklink_color_id))
 
     #
@@ -1288,10 +1302,6 @@ def build_canonical_db(results):
 
             del failed_cache[element_id]
 
-            save_json_file(
-                FAILED_CACHE_FILE,
-                failed_cache,
-            )
         #
         # BrickLink canonical part
         #
@@ -1351,11 +1361,6 @@ def build_canonical_db(results):
         elif element_id in failed_studio_cache:
 
             del failed_studio_cache[element_id]
-
-            save_json_file(
-                FAILED_STUDIO_CACHE_FILE,
-                failed_studio_cache,
-            )
 
         #
         # Build canonical entry
@@ -1568,11 +1573,18 @@ def build_palette(entries, name):
         if not entry["studio"]["resolved"]:
             continue
 
+        bricklink_name = entry["bricklink"]["name"] or entry["lego"]["name"] or part_file
+        #
+        # Skip DUPLO in Studio palettes
+        #
+
+        if "duplo" in bricklink_name.lower():
+
+            continue
+
         part_file = entry["studio"]["part_file"]
 
         color_id = entry["studio"]["color_id"]
-
-        bricklink_name = entry["bricklink"]["name"] or part_file
 
         #
         # Palette entry
