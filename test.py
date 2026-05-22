@@ -1,98 +1,70 @@
 #!/usr/bin/env python3
-
 import json
-import os
+from pathlib import Path
 
-import requests
-from dotenv import load_dotenv
-from requests_oauthlib import OAuth1
+# ----------------------------
+# Load files
+# ----------------------------
 
-load_dotenv()
+CACHE_DIR = Path("cache")
 
-# ------------------------------------------------------------
-# CONFIG
-# ------------------------------------------------------------
+canonical_path = CACHE_DIR / "canonical_mapping.json"
+studio_lookup_path = CACHE_DIR / "studio_lookup_index.json"
 
-ELEMENT_ID = "6401028"
+with open(canonical_path, encoding="utf-8") as f:
+    canonical = json.load(f)
 
-# ------------------------------------------------------------
-# AUTH
-# ------------------------------------------------------------
+with open(studio_lookup_path, encoding="utf-8") as f:
+    studio_lookup = json.load(f)
 
-auth = OAuth1(
-    os.environ["BRICKLINK_CONSUMER_KEY"],
-    os.environ["BRICKLINK_CONSUMER_SECRET"],
-    os.environ["BRICKLINK_TOKEN"],
-    os.environ["BRICKLINK_TOKEN_SECRET"],
-)
+# ----------------------------
+# Tracking
+# ----------------------------
 
-# ------------------------------------------------------------
-# REQUEST
-# ------------------------------------------------------------
+matched = {}
+failed = {}
 
-url = "https://api.bricklink.com/api/store/v1/" f"item_mapping/{ELEMENT_ID}"
+checked = 0
+skipped_duplo = 0
 
-print(f"Fetching: {url}")
+for element_id, entry in canonical.items():
 
-response = requests.get(
-    url,
-    auth=auth,
-    timeout=30,
-)
+    bricklink = entry.get("bricklink", {})
+    studio = entry.get("studio", {})
 
-print()
-print(f"HTTP {response.status_code}")
-print()
+    bricklink_part = bricklink.get("part_no")
+    bricklink_name = bricklink.get("name") or ""
 
-response.raise_for_status()
+    # Skip entries without part numbers
+    if not bricklink_part:
+        continue
 
-data = response.json()
+    # Skip DUPLO entries
+    if "duplo" in bricklink_name.lower() or studio.get("resolution_method") == "reject_duplo":
+        skipped_duplo += 1
+        continue
 
-# ------------------------------------------------------------
-# FULL OUTPUT
-# ------------------------------------------------------------
+    checked += 1
 
-print("=== FULL RESPONSE ===")
-print()
+    studio_file = studio_lookup.get(bricklink_part.lower())
 
-print(
-    json.dumps(
-        data,
-        indent=2,
-        sort_keys=True,
-    )
-)
+    if studio_file:
+        matched[element_id] = studio_file
+    else:
+        failed[element_id] = bricklink_part
 
-print()
+print("Total checked :", checked)
+print("Matched       :", len(matched))
+print("Failed        :", len(failed))
+print("Skipped duplo :", skipped_duplo)
 
-# ------------------------------------------------------------
-# FIRST MAPPING
-# ------------------------------------------------------------
+# ----------------------------
+# Save failures
+# ----------------------------
 
-if data.get("data"):
+failed_path = CACHE_DIR / "failed.json"
 
-    mapping = data["data"][0]
+with open(failed_path, "w", encoding="utf-8") as f:
+    json.dump(failed, f, indent=2)
 
-    print("=== FIRST MAPPING ===")
-    print()
-
-    print(
-        json.dumps(
-            mapping,
-            indent=2,
-            sort_keys=True,
-        )
-    )
-
-    print()
-
-    print("=== ITEM OBJECT ===")
-    print()
-
-    print(
-        json.dumps(
-            mapping.get("item", {}),
-            indent=2,
-            sort_keys=True,
-        )
-    )
+print(f"Failed list saved to: {failed_path}")

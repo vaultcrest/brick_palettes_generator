@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -50,6 +51,8 @@ COLOR_DATABASE_FILE = DATA_DIR / "color_database.json"
 STUDIO_PALETTE_DIR = DATA_DIR / "studio_palettes"
 
 FORCE_REFRESH = False
+
+FORCE_STUDIO_REFRESH = True
 
 ITEM_TYPE_MAP = {
     "PART": "P",
@@ -144,6 +147,21 @@ stats = {
     "studio_palette_resolved": 0,
     "ldraw_resolved": 0,
     "missing_color_mapping": 0,
+    "canonical_mapping_reused": 0,
+    "studio_exact_resolved": 0,
+    "studio_alias_resolved": 0,
+    "studio_print_revision_resolved": 0,
+    "studio_geometry_revision_resolved": 0,
+    "studio_alternate_resolved": 0,
+    "studio_invalid_replacement_resolved": 0,
+    "ldraw_exact_resolved": 0,
+    "ldraw_alias_resolved": 0,
+    "ldraw_print_revision_resolved": 0,
+    "ldraw_geometry_revision_resolved": 0,
+    "ldraw_alternate_resolved": 0,
+    "ldraw_invalid_replacement_resolved": 0,
+    "reject_duplo": 0,
+    "reject_unresolved": 0,
 }
 
 
@@ -813,11 +831,7 @@ def resolve_studio_color(
     # Invalid / placeholder color
     #
 
-    if (
-        bricklink_color_id is None
-        or bricklink_color_id == 0
-        or str(bricklink_color_id) == "0"
-    ):
+    if bricklink_color_id is None or bricklink_color_id == 0 or str(bricklink_color_id) == "0":
 
         return 0
 
@@ -958,6 +972,35 @@ def lookup_rebrickable_fallback(
 # ------------------------------------------------------------
 # STUDIO PART FILE
 # ------------------------------------------------------------
+def add_candidate(
+    candidates,
+    candidate,
+    resolution_type,
+    confidence,
+    source,
+    generated_from,
+):
+
+    candidate = candidate.lower()
+
+    existing = candidates.get(candidate)
+
+    #
+    # Keep highest confidence version
+    #
+
+    if existing:
+
+        if existing["confidence"] >= confidence:
+            return
+
+    candidates[candidate] = {
+        "candidate": candidate,
+        "resolution_type": resolution_type,
+        "confidence": confidence,
+        "source": source,
+        "generated_from": generated_from,
+    }
 
 
 def resolve_studio_part(
@@ -978,30 +1021,127 @@ def resolve_studio_part(
     # -> 49753
     #
 
-    candidate_parts = []
-    candidate_methods = {}
+    candidates = {}
+
     #
     # 1. Canonical BL part
     #
 
-    candidate_parts.append(bricklink_part)
-
-    candidate_methods[bricklink_part.lower()] = "canonical"
-
-    #
-    # 2. Reverse alternates
-    #
-
-    reverse_alternates = list(reversed(alternate_parts))
-
-    candidate_parts.extend(reverse_alternates)
-
-    for alternate in reverse_alternates:
-
-        candidate_methods[alternate.lower()] = "alternate"
+    add_candidate(
+        candidates=candidates,
+        candidate=bricklink_part,
+        resolution_type="exact",
+        confidence=1.0,
+        source="bricklink_canonical",
+        generated_from=bricklink_part,
+    )
 
     #
-    # 3. Studio invalid replacement
+    # 2. BrickLink Studio alias
+    #
+    # 973pb4487c01
+    # -> bl_973pb4487c01
+    #
+
+    if not bricklink_part.startswith("bl_"):
+
+        add_candidate(
+            candidates=candidates,
+            candidate=f"bl_{bricklink_part}",
+            resolution_type="alias",
+            confidence=0.99,
+            source="generated_bl_alias",
+            generated_from=bricklink_part,
+        )
+
+    #
+    # 3. Print revision expansion
+    #
+    # 3069pb0304
+    # -> 3069bpb0304
+    #
+    # 3626pb0267
+    # -> 3626bpb0267
+    # -> 3626cpb0267
+    #
+
+    print_match = re.match(
+        r"^([0-9]+)(p(?:b|r)?[a-z0-9]+)$",
+        bricklink_part,
+        re.IGNORECASE,
+    )
+
+    if print_match:
+
+        base = print_match.group(1)
+
+        suffix = print_match.group(2)
+
+        for revision in ["b", "c", "d"]:
+
+            generated = f"{base}{revision}{suffix}"
+
+            add_candidate(
+                candidates=candidates,
+                candidate=generated,
+                resolution_type="print_revision",
+                confidence=0.95,
+                source="generated_print_revision",
+                generated_from=bricklink_part,
+            )
+
+    #
+    # 4. Geometry revision fallback
+    #
+    # 3044c -> 3044
+    #
+
+    geometry_match = re.match(
+        r"^([0-9]+)([abd])$",
+        bricklink_part,
+        re.IGNORECASE,
+    )
+
+    if geometry_match:
+
+        base = geometry_match.group(1)
+
+        add_candidate(
+            candidates=candidates,
+            candidate=base,
+            resolution_type="geometry_revision",
+            confidence=0.80,
+            source="generated_geometry_fallback",
+            generated_from=bricklink_part,
+        )
+
+    #
+    # 5. Assembly collapse - Disabled for now
+    #
+    # 4592c06 -> 4592
+    #
+
+    # assembly_match = re.match(
+    #     r"^([0-9]+)c\d+$",
+    #     bricklink_part,
+    #     re.IGNORECASE,
+    # )
+
+    # if assembly_match:
+
+    #     base = assembly_match.group(1)
+
+    #     add_candidate(
+    #         candidates=candidates,
+    #         candidate=base,
+    #         resolution_type="assembly_variant",
+    #         confidence=0.75,
+    #         source="generated_assembly_variant",
+    #         generated_from=bricklink_part,
+    #     )
+
+    #
+    # 6. Studio invalid replacement
     #
 
     canonical_dat = (f"{bricklink_part}.dat").lower()
@@ -1016,23 +1156,57 @@ def resolve_studio_part(
 
             replacement_part = replacement.removesuffix(".dat")
 
-            candidate_parts.append(replacement_part)
+            add_candidate(
+                candidates=candidates,
+                candidate=replacement_part,
+                resolution_type="invalid_replacement",
+                confidence=0.97,
+                source="invalid_part_map",
+                generated_from=bricklink_part,
+            )
 
-            candidate_methods[replacement_part.lower()] = "invalid_replacement"
+    #
+    # 7. Reverse alternates
+    #
+
+    reverse_alternates = list(reversed(alternate_parts))
+
+    for alternate in reverse_alternates:
+
+        add_candidate(
+            candidates=candidates,
+            candidate=alternate,
+            resolution_type="alternate",
+            confidence=0.90,
+            source="bricklink_alternate",
+            generated_from=bricklink_part,
+        )
 
     #
     # Deduplicate while preserving order
     #
 
-    candidate_parts = list(dict.fromkeys(candidate_parts))
-
     attempted = []
 
-    for candidate in candidate_parts:
+    for candidate_data in sorted(
+        candidates.values(),
+        key=lambda x: x["confidence"],
+        reverse=True,
+    ):
+
+        candidate = candidate_data["candidate"]
 
         part_file = (f"{candidate}.dat").lower()
 
-        attempted.append(part_file)
+        attempted.append(
+            {
+                "part_file": part_file,
+                "resolution_type": (candidate_data["resolution_type"]),
+                "confidence": (candidate_data["confidence"]),
+                "source": (candidate_data["source"]),
+                "generated_from": (candidate_data["generated_from"]),
+            }
+        )
 
         #
         # Studio palettes are PRIMARY
@@ -1064,12 +1238,33 @@ def resolve_studio_part(
 
                 stats["ldraw_resolved"] += 1
 
-            resolution_method = candidate_methods.get(
-                candidate.lower(),
-                "unknown",
-            )
+            #
+            # Resolution telemetry
+            #
 
-            if resolution_method == "invalid_replacement":
+            resolution_method = candidate_data["resolution_type"]
+
+            method_key = resolution_method
+
+            if source_type == "studio_palette":
+
+                stat_name = f"studio_{method_key}_resolved"
+
+                if stat_name in stats:
+
+                    stats[stat_name] += 1
+
+            elif source_type == "ldraw":
+
+                stat_name = f"ldraw_{method_key}_resolved"
+
+                if stat_name in stats:
+
+                    stats[stat_name] += 1
+
+            resolution_method = candidate_data["resolution_type"]
+
+            if candidate_data["source"] == "invalid_part_map":
 
                 stats["studio_invalid_replacement"] += 1
 
@@ -1077,10 +1272,10 @@ def resolve_studio_part(
                 "part_file": part_file,
                 "source_type": source_type,
                 "resolved_from": candidate,
+                "candidate_metadata": (candidate_data),
                 "resolution_method": (resolution_method),
                 "attempted": attempted,
             }
-
     #
     # Resolution failed
     #
@@ -1265,8 +1460,10 @@ def build_canonical_db(results):
             0,
         )
 
+        mapping = None
+
         #
-        # Incremental skip check
+        # Incremental behavior
         #
 
         if existing:
@@ -1281,7 +1478,13 @@ def build_canonical_db(results):
 
             existing_channel = existing.get("channel")
 
-            if existing_price == current_price and existing_channel == current_channel and not FORCE_REFRESH:
+            same_state = existing_price == current_price and existing_channel == current_channel
+
+            #
+            # Full incremental skip
+            #
+
+            if same_state and not FORCE_REFRESH and not FORCE_STUDIO_REFRESH:
 
                 stats["incremental_skipped"] += 1
 
@@ -1289,14 +1492,37 @@ def build_canonical_db(results):
 
                 continue
 
+            #
+            # Studio-only refresh
+            #
+
+            elif same_state and FORCE_STUDIO_REFRESH and not FORCE_REFRESH:
+
+                stats["canonical_mapping_reused"] += 1
+
+                mapping = {
+                    "bl_part_no": (existing["bricklink"]["part_no"]),
+                    "bl_color_id": (existing["bricklink"]["color_id"]),
+                    "bl_item_type": (existing["bricklink"]["item_type"]),
+                    "bl_name": (existing["bricklink"]["name"]),
+                    "bl_alternate_no": (existing["bricklink"]["alternate_no"]),
+                    "source": (existing["source"]),
+                }
+
         #
-        # Resolve mapping
+        # Fresh mapping lookup
         #
 
-        mapping = resolve_mapping(element_id)
+        if not mapping:
+
+            mapping = resolve_mapping(element_id)
 
         if not mapping:
             continue
+
+        #
+        # Remove stale failed mapping
+        #
 
         if element_id in failed_cache:
 
@@ -1317,16 +1543,31 @@ def build_canonical_db(results):
             [],
         )
 
+        bricklink_name = mapping.get("bl_name") or ""
+
         #
-        # Resolve Studio-compatible DAT
+        # Skip DUPLO Studio resolution
         #
 
-        studio_resolution = resolve_studio_part(
-            bricklink_part,
-            alternate_parts,
-        )
+        if "duplo" in bricklink_name.lower():
+
+            studio_resolution = {
+                "part_file": None,
+                "source_type": None,
+                "resolved_from": None,
+                "resolution_method": ("reject_duplo"),
+                "attempted": [],
+            }
+
+        else:
+
+            studio_resolution = resolve_studio_part(
+                bricklink_part,
+                alternate_parts,
+            )
 
         studio_part = studio_resolution["part_file"]
+
         #
         # Resolve Studio/LDraw color
         #
@@ -1343,19 +1584,37 @@ def build_canonical_db(results):
 
             studio_supported = False
 
-            failed_studio_cache[element_id] = {
-                "bricklink_part": (bricklink_part),
-                "alternate_no": (alternate_parts),
-                "attempted_parts": (studio_resolution["attempted"]),
-                "resolution_candidates": ([bricklink_part] + alternate_parts),
-                "original_part": (bricklink_part),
-                "bricklink_color_id": (mapping["bl_color_id"]),
-                "studio_color_id": (studio_color),
-                "timestamp": time.time(),
-            }
+            reject_reason = studio_resolution.get("resolution_method") or "unresolved"
+
+            #
+            # DUPLO is intentionally excluded
+            # and should NOT pollute failed mappings
+            #
+
+            if reject_reason == "reject_duplo":
+
+                stats["reject_duplo"] += 1
+
+            else:
+
+                stats["reject_unresolved"] += 1
+
+                failed_studio_cache[element_id] = {
+                    "reject_reason": reject_reason,
+                    "lego_name": (item.get("name")),
+                    "bricklink_name": (mapping.get("bl_name")),
+                    "bricklink_part": (bricklink_part),
+                    "alternate_no": (alternate_parts),
+                    "attempted_parts": (studio_resolution["attempted"]),
+                    "resolution_candidates": ([bricklink_part] + alternate_parts),
+                    "original_part": (bricklink_part),
+                    "bricklink_color_id": (mapping["bl_color_id"]),
+                    "studio_color_id": (studio_color),
+                    "timestamp": time.time(),
+                }
 
         #
-        # Remove stale failed entries
+        # Remove stale failed Studio entries
         #
 
         elif element_id in failed_studio_cache:
@@ -1389,11 +1648,12 @@ def build_canonical_db(results):
             # Studio/LDraw mapping
             #
             "studio": {
-                "part_file": studio_part,
+                "part_file": (studio_part),
                 "resolved_from": (studio_resolution["resolved_from"]),
+                "candidate_metadata": (studio_resolution.get("candidate_metadata")),
                 "resolution_method": (studio_resolution.get("resolution_method")),
                 "source_type": (studio_resolution.get("source_type")),
-                "color_id": studio_color,
+                "color_id": (studio_color),
                 "resolved": (studio_supported),
             },
             #
@@ -1441,9 +1701,11 @@ def build_canonical_db(results):
         del canonical[stale_id]
 
         if stale_id in failed_cache:
+
             del failed_cache[stale_id]
 
         if stale_id in failed_studio_cache:
+
             del failed_studio_cache[stale_id]
 
     stats["incremental_removed"] += len(stale_ids)
@@ -1466,10 +1728,12 @@ def build_canonical_db(results):
         FAILED_STUDIO_CACHE_FILE,
         failed_studio_cache,
     )
+
     save_json_file(
         MISSING_COLOR_MAPPING_FILE,
         missing_color_mappings,
     )
+
     print(f"Saved canonical DB: " f"{len(canonical_db)} entries")
 
 
@@ -1573,7 +1837,10 @@ def build_palette(entries, name):
         if not entry["studio"]["resolved"]:
             continue
 
+        part_file = entry["studio"]["part_file"]
+
         bricklink_name = entry["bricklink"]["name"] or entry["lego"]["name"] or part_file
+
         #
         # Skip DUPLO in Studio palettes
         #
@@ -1582,13 +1849,7 @@ def build_palette(entries, name):
 
             continue
 
-        part_file = entry["studio"]["part_file"]
-
         color_id = entry["studio"]["color_id"]
-
-        #
-        # Palette entry
-        #
 
         lines.append(f"0 {part_file}")
 
@@ -1603,7 +1864,9 @@ def build_palette(entries, name):
 # EXPORTS
 # ------------------------------------------------------------
 def export_failed_studio_review():
+
     seen = set()
+
     if not failed_studio_cache:
 
         return
@@ -1611,6 +1874,7 @@ def export_failed_studio_review():
     inventory = ET.Element("INVENTORY")
 
     for entry in failed_studio_cache.values():
+
         key = (
             entry["original_part"],
             entry.get(
@@ -1623,6 +1887,7 @@ def export_failed_studio_review():
             continue
 
         seen.add(key)
+
         item = ET.SubElement(
             inventory,
             "ITEM",
@@ -1647,15 +1912,60 @@ def export_failed_studio_review():
                 1,
             )
         )
+
+        #
+        # Rich remarks
+        #
+
+        remarks = []
+
+        lego_name = entry.get("lego_name")
+
+        bricklink_name = entry.get("bricklink_name")
+
+        if lego_name:
+
+            remarks.append(f"LEGO: {lego_name}")
+
+        if bricklink_name:
+
+            remarks.append(f"BL: {bricklink_name}")
+        reject_reason = entry.get("reject_reason")
+
+        if reject_reason:
+
+            remarks.append(f"Reject: {reject_reason}")
+        attempted = entry.get(
+            "attempted_parts",
+            [],
+        )
+
+        if attempted:
+
+            attempt_strings = []
+
+            for attempt in attempted:
+
+                if isinstance(attempt, dict):
+
+                    attempt_strings.append(
+                        attempt.get(
+                            "part_file",
+                            "unknown",
+                        )
+                    )
+
+                else:
+
+                    attempt_strings.append(str(attempt))
+
+            remarks.append("Attempts: " + ", ".join(attempt_strings))
+
         ET.SubElement(
             item,
             "REMARKS",
-        ).text = "Attempts: " + ", ".join(
-            entry.get(
-                "attempted_parts",
-                [],
-            )
-        )
+        ).text = " | ".join(remarks)
+
         ET.SubElement(
             item,
             "MINQTY",
@@ -1688,6 +1998,7 @@ def export_outputs():
         "standard": [],
         "out_of_stock": [],
         "all": [],
+        "all_in_stock": [],
     }
 
     for entry in canonical_db.values():
@@ -1695,6 +2006,10 @@ def export_outputs():
         channel = entry["channel"]
 
         channels["all"].append(entry)
+
+        if channel != "out_of_stock":
+
+            channels["all_in_stock"].append(entry)
 
         if channel == "pab":
 
