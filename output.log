@@ -1,0 +1,94 @@
+Loaded canonical cache: 16731 entries
+Loaded color database: 174 BrickLink colors
+Loaded 21235 LDraw parts
+Loaded 17091 Studio part definitions
+Loaded 3869 Studio palette parts
+Loaded 811 Studio exclusions
+Fetching LEGO inventory
+Fetching page 1
+Fetching page 2
+Fetching page 3
+Fetching page 4
+Fetching page 5
+Fetching page 6
+Fetching page 7
+Fetching page 8
+Fetching page 9
+Fetching page 10
+Fetching page 11
+Fetching page 12
+Unique LEGO items: 16732
+BrickLink mapping progress: 5% (837/16732)
+BrickLink mapping progress: 10% (1674/16732)
+BrickLink mapping progress: 15% (2510/16732)
+BrickLink mapping progress: 20% (3347/16732)
+BrickLink mapping progress: 25% (4183/16732)
+BrickLink mapping progress: 30% (5020/16732)
+BrickLink mapping progress: 35% (5857/16732)
+BrickLink mapping progress: 40% (6693/16732)
+BrickLink mapping progress: 45% (7530/16732)
+BrickLink mapping progress: 50% (8366/16732)
+BrickLink mapping progress: 55% (9203/16732)
+BrickLink mapping progress: 60% (10040/16732)
+BrickLink mapping progress: 65% (10876/16732)
+BrickLink mapping progress: 70% (11713/16732)
+BrickLink mapping progress: 75% (12549/16732)
+BrickLink mapping progress: 80% (13386/16732)
+BrickLink mapping progress: 85% (14223/16732)
+response: <Response [200]>
+data: {'meta': {'description': 'OK', 'message': 'OK', 'code': 200}, 'data': {'no': '92355', 'name': 'Friends Accessories, Animal Show and Grooming Supplies, 16 in Bag &#40;Multipack&#41;', 'type': 'PART', 'category_id': 771, 'image_url': '//img.bricklink.com/PL/92355.jpg', 'thumbnail_url': '//img.bricklink.com/P/157/92355.jpg', 'weight': '3.69', 'dim_x': '0.00', 'dim_y': '0.00', 'dim_z': '0.00', 'year_released': 2012, 'is_obsolete': False}}
+debug: {'no': '92355', 'name': 'Friends Accessories, Animal Show and Grooming Supplies, 16 in Bag &#40;Multipack&#41;', 'type': 'PART', 'category_id': 771, 'image_url': '//img.bricklink.com/PL/92355.jpg', 'thumbnail_url': '//img.bricklink.com/P/157/92355.jpg', 'weight': '3.69', 'dim_x': '0.00', 'dim_y': '0.00', 'dim_z': '0.00', 'year_released': 2012, 'is_obsolete': False}
+Fetched missing metadata: 92355 -> Friends Accessories, Animal Show and Grooming Supplies, 16 in Bag &#40;Multipack&#41;
+BrickLink mapping progress: 90% (15059/16732)
+BrickLink mapping progress: 95% (15896/16732)
+BrickLink mapping progress: 100% (16732/16732)
+Removed stale entries: 0
+Saved canonical DB: 16732 entries
+Saved reverse index 15324
+Saved XML bestseller
+Saved XML standard
+Saved XML out_of_stock
+Saved XML all
+Saved XML all_in_stock
+Saved palette Pick a Brick Bestseller
+Saved palette Pick a Brick Standard
+Saved palette Pick a Brick Out Of Stock
+Saved palette Pick a Brick All
+Saved palette Pick a Brick All In Stock
+Saved failed Studio review XML
+Temporary failures: 0
+
+Failed Studio mappings: 6
+Lookup Statistics
+bricklink_success: 1
+manual_override: 0
+rebrickable_fallback: 0
+unresolved: 0
+temporary_failure: 0
+canonical_cache: 0
+incremental_skipped: 0
+incremental_updated: 15634
+incremental_removed: 0
+studio_excluded: 1098
+studio_invalid_replacement: 0
+studio_palette_resolved: 1
+ldraw_resolved: 4
+missing_color_mapping: 0
+canonical_mapping_reused: 16731
+studio_definition_resolved: 15623
+studio_definition_exact: 14368
+studio_definition_bl_alias: 1255
+studio_exact_resolved: 1
+studio_alias_resolved: 0
+studio_print_revision_resolved: 0
+studio_geometry_revision_resolved: 0
+studio_alternate_resolved: 0
+studio_invalid_replacement_resolved: 0
+ldraw_exact_resolved: 4
+ldraw_alias_resolved: 0
+ldraw_print_revision_resolved: 0
+ldraw_geometry_revision_resolved: 0
+ldraw_alternate_resolved: 0
+ldraw_invalid_replacement_resolved: 0
+studio_unresolved: 6
+DONE

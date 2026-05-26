@@ -360,6 +360,7 @@ This project uses Studio's internal files:
 C:\Program Files\Studio 2.0\data\elementInfoList.json
 C:\Program Files\Studio 2.0\data\InvalidPartMap.xml
 C:\Program Files\Studio 2.0\data\CustomColorDefinition.txt
+C:\Program Files\Studio 2.0\data\elementInfoList.json
 ```
 
 

@@ -9,7 +9,7 @@ from pathlib import Path
 
 DATA_DIR = Path("data")
 
-STUDIO_COLOR_DEFINITION_FILE = DATA_DIR / "ldraw" / "CustomColorDefinition.txt"
+STUDIO_COLOR_DEFINITION_FILE = DATA_DIR / "studio_files" / "CustomColorDefinition.txt"
 
 OUTPUT_FILE = DATA_DIR / "color_database.json"
 

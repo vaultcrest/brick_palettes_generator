@@ -21,6 +21,8 @@ load_dotenv()
 # ------------------------------------------------------------
 
 DEBUG = False
+LIMIT_ITEMS = False  # add a number to limit to number of items
+MAX_PAGES = False  # Limit number of pages from Lego for Debugging
 
 OUTPUT_DIR = Path("output")
 OUTPUT_DIR.mkdir(exist_ok=True)
@@ -30,7 +32,9 @@ CACHE_DIR.mkdir(exist_ok=True)
 
 DATA_DIR = Path("data")
 
-LDRAW_INDEX_FILE = DATA_DIR / "ldraw" / "part_index.json"
+LDRAW_INDEX_FILE = DATA_DIR / "studio_files" / "part_index.json"
+
+STUDIO_DEFINITION_INDEX_FILE = CACHE_DIR / "studio_part_definitions.json"
 
 CANONICAL_DB_FILE = CACHE_DIR / "canonical_mapping.json"
 
@@ -50,6 +54,10 @@ COLOR_DATABASE_FILE = DATA_DIR / "color_database.json"
 
 STUDIO_PALETTE_DIR = DATA_DIR / "studio_palettes"
 
+STUDIO_EXCLUSIONS_FILE = CACHE_DIR / "studio_exclusions.yaml"
+
+studio_exclusions = {}
+
 FORCE_REFRESH = False
 
 FORCE_STUDIO_REFRESH = True
@@ -60,7 +68,7 @@ ITEM_TYPE_MAP = {
     "SET": "S",
 }
 
-INVALID_PART_MAP_FILE = DATA_DIR / "ldraw" / "InvalidPartMap.xml"
+# INVALID_PART_MAP_FILE = DATA_DIR / "studio_files" / "InvalidPartMap.xml"
 
 # ------------------------------------------------------------
 # AUTH
@@ -142,12 +150,15 @@ stats = {
     "incremental_skipped": 0,
     "incremental_updated": 0,
     "incremental_removed": 0,
-    "studio_unresolved": 0,
+    "studio_excluded": 0,
     "studio_invalid_replacement": 0,
     "studio_palette_resolved": 0,
     "ldraw_resolved": 0,
     "missing_color_mapping": 0,
     "canonical_mapping_reused": 0,
+    "studio_definition_resolved": 0,
+    "studio_definition_exact": 0,
+    "studio_definition_bl_alias": 0,
     "studio_exact_resolved": 0,
     "studio_alias_resolved": 0,
     "studio_print_revision_resolved": 0,
@@ -160,8 +171,7 @@ stats = {
     "ldraw_geometry_revision_resolved": 0,
     "ldraw_alternate_resolved": 0,
     "ldraw_invalid_replacement_resolved": 0,
-    "reject_duplo": 0,
-    "reject_unresolved": 0,
+    "studio_unresolved": 0,
 }
 
 
@@ -261,7 +271,7 @@ def fetch_bricklink_item_metadata(
         response = requests.get(
             url,
             auth=auth,
-            timeout=30,
+            timeout=5,
         )
 
         response.raise_for_status()
@@ -363,13 +373,10 @@ color_database = load_json_file(
 print(f"Loaded color database: " f"{len(color_database.get('bricklink', {}))} " f"BrickLink colors")
 
 ldraw_index = {}
-
 known_ldraw_parts = set()
-
 known_studio_parts = set()
-
 known_parts = {}
-
+studio_definition_index = {}
 invalid_part_map = {}
 
 
@@ -393,6 +400,18 @@ def load_ldraw_index():
         )["ldraw"] = True
 
     print(f"Loaded " f"{len(known_ldraw_parts)} " f"LDraw parts")
+
+
+def load_studio_definition_index():
+
+    global studio_definition_index
+
+    studio_definition_index = load_json_file(
+        STUDIO_DEFINITION_INDEX_FILE,
+        {},
+    )
+
+    print(f"Loaded " f"{len(studio_definition_index)} " f"Studio part definitions")
 
 
 def load_studio_palettes():
@@ -481,43 +500,62 @@ def load_studio_palettes():
     print(f"Loaded " f"{len(known_studio_parts)} " f"Studio palette parts")
 
 
-def load_invalid_part_map():
+def load_studio_exclusions():
 
-    global invalid_part_map
+    global studio_exclusions
 
-    if not INVALID_PART_MAP_FILE.exists():
+    studio_exclusions = load_yaml_file(
+        STUDIO_EXCLUSIONS_FILE,
+        {},
+    )
 
-        print("Missing InvalidPartMap:")
+    #
+    # Normalize all exclusion keys
+    # to lowercase strings
+    #
 
-        print(INVALID_PART_MAP_FILE)
+    studio_exclusions = {str(key).lower(): value for key, value in studio_exclusions.items()}
 
-        return
+    print(f"Loaded " f"{len(studio_exclusions)} " f"Studio exclusions")
 
-    tree = ET.parse(INVALID_PART_MAP_FILE)
 
-    root = tree.getroot()
+# def load_invalid_part_map():
 
-    mapping = {}
+#     global invalid_part_map
 
-    for item in root.findall(".//InvalidPart"):
+#     if not INVALID_PART_MAP_FILE.exists():
 
-        source = (item.findtext("source") or "").strip().lower()
+#         print("Missing InvalidPartMap:")
 
-        replacement = (item.findtext("replacement") or "").strip().lower()
+#         print(INVALID_PART_MAP_FILE)
 
-        bl_item_no = (item.findtext("BLItemNo") or "").strip()
+#         return
 
-        if not source:
-            continue
+#     tree = ET.parse(INVALID_PART_MAP_FILE)
 
-        mapping[source] = {
-            "replacement": replacement,
-            "bricklink_part": (bl_item_no),
-        }
+#     root = tree.getroot()
 
-    invalid_part_map = mapping
+#     mapping = {}
 
-    print(f"Loaded " f"{len(invalid_part_map)} " f"invalid part mappings")
+#     for item in root.findall(".//InvalidPart"):
+
+#         source = (item.findtext("source") or "").strip().lower()
+
+#         replacement = (item.findtext("replacement") or "").strip().lower()
+
+#         bl_item_no = (item.findtext("BLItemNo") or "").strip()
+
+#         if not source:
+#             continue
+
+#         mapping[source] = {
+#             "replacement": replacement,
+#             "bricklink_part": (bl_item_no),
+#         }
+
+#     invalid_part_map = mapping
+
+#     print(f"Loaded " f"{len(invalid_part_map)} " f"invalid part mappings")
 
 
 # ------------------------------------------------------------
@@ -580,6 +618,12 @@ def fetch_lego_inventory(
     page = 1
 
     while True:
+
+        if MAX_PAGES and page > MAX_PAGES:
+
+            print(f"Reached page limit: " f"{MAX_PAGES}")
+
+            break
 
         print(f"Fetching page {page}")
 
@@ -741,12 +785,12 @@ def lookup_bricklink_mapping(
             # Small pacing delay
             #
 
-            time.sleep(0.10)
+            time.sleep(0.02)
 
             response = requests.get(
                 url,
                 auth=auth,
-                timeout=30,
+                timeout=5,
             )
 
             response.raise_for_status()
@@ -763,22 +807,17 @@ def lookup_bricklink_mapping(
 
             part_no = mapping["item"]["no"]
 
-            metadata = fetch_bricklink_item_metadata(
-                item_type,
-                part_no,
-            )
-
             stats["bricklink_success"] += 1
 
             return {
                 "bl_part_no": part_no,
                 "bl_color_id": mapping["color_id"],
                 "bl_item_type": item_type,
-                "bl_name": metadata.get("name"),
-                "bl_alternate_no": metadata.get(
-                    "alternate_no",
-                    [],
-                ),
+                #
+                # defer metadata lookup
+                #
+                "bl_name": None,
+                "bl_alternate_no": [],
                 "source": "bricklink",
             }
 
@@ -915,6 +954,9 @@ def lookup_rebrickable_fallback(
             "part",
             {},
         )
+        ## Debug name
+        if not part.get("name"):
+            print(f"REBRICKABLE no name data: " f"{data}")
 
         color = data.get(
             "color",
@@ -970,6 +1012,36 @@ def lookup_rebrickable_fallback(
 
 
 # ------------------------------------------------------------
+# REJECTION HELPERS
+# ------------------------------------------------------------
+
+
+def should_reject_studio_part(
+    bricklink_name,
+    lego_name,
+):
+
+    bricklink_name = (bricklink_name or "").lower()
+
+    lego_name = (lego_name or "").lower()
+
+    combined = f"{bricklink_name} {lego_name}"
+
+    reject_terms = {
+        "duplo": "reject_duplo",
+        "braille": "reject_braille",
+    }
+
+    for term, reason in reject_terms.items():
+
+        if term in combined:
+
+            return reason
+
+    return None
+
+
+# ------------------------------------------------------------
 # STUDIO PART FILE
 # ------------------------------------------------------------
 def add_candidate(
@@ -1022,6 +1094,92 @@ def resolve_studio_part(
     #
 
     candidates = {}
+
+    #
+    # Explicit Studio exclusions
+    #
+    # These are authoritative skips
+    # for parts known to have
+    # no usable Studio/LDraw model.
+    #
+
+    exclusion = studio_exclusions.get(bricklink_part.lower())
+
+    if exclusion:
+
+        stats["studio_excluded"] += 1
+
+        return {
+            "part_file": None,
+            "source_type": "studio_exclusion",
+            "resolved_from": "studio_exclusion",
+            "resolution_method": "studio_exclusion",
+            "candidate_metadata": {
+                "reason": exclusion.get("reason"),
+                "category": exclusion.get("category"),
+            },
+            "attempted": [],
+        }
+
+    #
+    # PRIMARY:
+    # Studio Part Definitions
+    #
+
+    definition_match = studio_definition_index.get(bricklink_part.lower())
+
+    if definition_match:
+
+        part_file = definition_match.lower()
+
+        part_sources = known_parts.get(
+            part_file,
+            {},
+        )
+
+        source_type = None
+
+        if part_sources.get("studio"):
+
+            source_type = "studio_definition"
+
+        elif part_sources.get("ldraw"):
+
+            source_type = "studio_definition_ldraw"
+
+        else:
+
+            source_type = "studio_definition_missing"
+
+        stats["studio_definition_resolved"] += 1
+
+        if part_file.startswith("bl_"):
+
+            stats["studio_definition_bl_alias"] += 1
+
+        else:
+
+            stats["studio_definition_exact"] += 1
+
+        return {
+            "part_file": part_file,
+            "source_type": source_type,
+            "resolved_from": bricklink_part,
+            "candidate_metadata": {
+                "candidate": bricklink_part,
+                "resolution_type": "studio_definition",
+                "confidence": 1.0,
+                "source": "studio_part_definitions",
+                "generated_from": bricklink_part,
+            },
+            "resolution_method": "studio_definition",
+            "attempted": [],
+        }
+    # Debug area
+    # else:
+    #     print("Part not resolved:", bricklink_part.lower())
+
+    # Debug area
 
     #
     # 1. Canonical BL part
@@ -1351,7 +1509,6 @@ def resolve_mapping(
     #
 
     mapping = lookup_bricklink_mapping(element_id)
-
     #
     # Temporary network/API failure
     #
@@ -1392,6 +1549,13 @@ def resolve_mapping(
                 manual_overrides,
             )
 
+            #
+            # DEBUG missing BL name
+            #
+            if not mapping.get("bl_name"):
+                print(f"REBRICKABLE FALLBACK: " f"{element_id} " f"-> " f"{mapping['bl_part_no']}" f"-> " f"{mapping}")
+
+            stats["rebrickable_fallback"] += 1
     #
     # Permanent failure
     #
@@ -1492,7 +1656,6 @@ def build_canonical_db(results):
 
                 continue
 
-            #
             # Studio-only refresh
             #
 
@@ -1519,7 +1682,28 @@ def build_canonical_db(results):
 
         if not mapping:
             continue
+        #
+        # Fetch missing BrickLink metadata
+        # lazily only when needed
+        #
 
+        if not mapping.get("bl_name"):
+
+            metadata = fetch_bricklink_item_metadata(
+                mapping["bl_item_type"],
+                mapping["bl_part_no"],
+            )
+
+            if metadata:
+
+                mapping["bl_name"] = metadata.get("name")
+
+                mapping["bl_alternate_no"] = metadata.get(
+                    "alternate_no",
+                    [],
+                )
+
+                print(f"Fetched missing metadata: " f"{mapping['bl_part_no']} " f"-> " f"{mapping['bl_name']}")
         #
         # Remove stale failed mapping
         #
@@ -1543,28 +1727,10 @@ def build_canonical_db(results):
             [],
         )
 
-        bricklink_name = mapping.get("bl_name") or ""
-
-        #
-        # Skip DUPLO Studio resolution
-        #
-
-        if "duplo" in bricklink_name.lower():
-
-            studio_resolution = {
-                "part_file": None,
-                "source_type": None,
-                "resolved_from": None,
-                "resolution_method": ("reject_duplo"),
-                "attempted": [],
-            }
-
-        else:
-
-            studio_resolution = resolve_studio_part(
-                bricklink_part,
-                alternate_parts,
-            )
+        studio_resolution = resolve_studio_part(
+            bricklink_part,
+            alternate_parts,
+        )
 
         studio_part = studio_resolution["part_file"]
 
@@ -1580,24 +1746,49 @@ def build_canonical_db(results):
 
         studio_supported = True
 
+        reject_reason = studio_resolution.get("resolution_method") or "unresolved"
+
+        #
+        # Explicit Studio exclusions
+        # should never appear in failed mappings
+        #
+
+        if reject_reason == "studio_exclusion":
+
+            #
+            # Remove any stale failed entries
+            # tied to this excluded BrickLink part
+            #
+
+            stale_keys = []
+
+            for failed_element_id, failed_entry in failed_studio_cache.items():
+
+                failed_bl_part = str(failed_entry.get("bricklink_part", "")).lower()
+
+                if failed_bl_part == bricklink_part.lower():
+
+                    stale_keys.append(failed_element_id)
+
+            for stale_key in stale_keys:
+
+                del failed_studio_cache[stale_key]
+
+            continue
+
         if not studio_part:
 
             studio_supported = False
 
-            reject_reason = studio_resolution.get("resolution_method") or "unresolved"
-
             #
-            # DUPLO is intentionally excluded
+            # Intentionally excluded from Studio
             # and should NOT pollute failed mappings
             #
 
-            if reject_reason == "reject_duplo":
-
-                stats["reject_duplo"] += 1
+            if reject_reason == "studio_exclusion":
+                pass
 
             else:
-
-                stats["reject_unresolved"] += 1
 
                 failed_studio_cache[element_id] = {
                     "reject_reason": reject_reason,
@@ -2106,13 +2297,27 @@ def main():
 
     load_ldraw_index()
 
+    load_studio_definition_index()
+
     load_studio_palettes()
 
-    load_invalid_part_map()
+    load_studio_exclusions()
+
+    # load_invalid_part_map()
 
     print("Fetching LEGO inventory")
 
     results = fetch_lego_inventory()
+
+    #
+    # TEMP LIMIT FOR REFACTORING
+    #
+
+    if LIMIT_ITEMS:
+
+        results = results[:LIMIT_ITEMS]
+
+        print(f"Refactor limit enabled: " f"{len(results)} items")
 
     print(f"Unique LEGO items: " f"{len(results)}")
 
