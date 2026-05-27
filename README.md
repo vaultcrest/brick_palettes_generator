@@ -352,7 +352,7 @@ git commit -m "Update Pick a Brick inventory"
 
 ---
 
-## Studio Files used
+## External Files used
 
 This project uses Studio's internal files:
 
@@ -361,6 +361,7 @@ C:\Program Files\Studio 2.0\data\elementInfoList.json
 C:\Program Files\Studio 2.0\data\InvalidPartMap.xml
 C:\Program Files\Studio 2.0\data\CustomColorDefinition.txt
 C:\Program Files\Studio 2.0\data\elementInfoList.json
+C:\Program Files\Studio 2.0\data\StudioPartDefinition2.txt
 ```
 
 

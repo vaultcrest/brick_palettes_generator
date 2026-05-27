@@ -187,6 +187,9 @@
 0 6553.dat
 1 Technic, Axle  2L with Reverser Handle Axle Connector
 2 72
+0 167.dat
+1 Bar 1 x 3 with 2 Stud Receptacles &#40;Radio Handle / Telephone Handset&#41;
+2 72
 0 6575.dat
 1 Technic Cam
 2 72
@@ -472,6 +475,9 @@
 0 50923.dat
 1 Technic, Liftarm, Modified Ball Joint Angled 1 x 2
 2 72
+0 bl_973c00.dat
+1 Torso Plain  / &#40;Same Color&#41; Arms / &#40;Same Color&#41; Hands
+2 14
 0 52501.dat
 1 Slope, Inverted 45 6 x 1 Double with 1 x 4 Cutout
 2 72
@@ -781,6 +787,9 @@
 0 4742.dat
 1 Cone 4 x 4 x 2 Hollow No Studs
 2 0
+0 167.dat
+1 Bar 1 x 3 with 2 Stud Receptacles &#40;Radio Handle / Telephone Handset&#41;
+2 4
 0 87407.dat
 1 Technic, Gear 20 Tooth Bevel with Pin Hole
 2 71
@@ -1315,9 +1324,6 @@
 0 15458.dat
 1 Technic, Panel Plate 3 x 11 x 1
 2 15
-0 98382p01.dat
-1 Teddy Bear with Black Eyes, Nose, and Mouth, Tan Stomach and Muzzle Pattern
-2 84
 0 62622.dat
 1 Container, Treasure Chest Bottom with Slots in Back
 2 30
@@ -1363,6 +1369,9 @@
 0 45707b.dat
 1 Vehicle, Forklift Wide Forks Reinforced with Rubber Belt Holder
 2 72
+0 bl_973c00.dat
+1 Torso Plain  / &#40;Same Color&#41; Arms / &#40;Same Color&#41; Hands
+2 308
 0 41762.dat
 1 Slope, Curved 6 x 1 with 2 Studs
 2 72
@@ -1912,6 +1921,9 @@
 0 30165.dat
 1 Slope, Curved 2 x 2 Double with 2 Hollow Studs
 2 71
+0 167.dat
+1 Bar 1 x 3 with 2 Stud Receptacles &#40;Radio Handle / Telephone Handset&#41;
+2 0
 0 2639.dat
 1 Plate 4 x 4 Corner
 2 28
@@ -5557,6 +5569,9 @@
 0 71689.dat
 1 Technic, Panel Car Mudguard Arched 13 x 2 x 5 Half Circle
 2 0
+0 167.dat
+1 Bar 1 x 3 with 2 Stud Receptacles &#40;Radio Handle / Telephone Handset&#41;
+2 15
 0 68325.dat
 1 Brick, Round 4 x 4 with Recessed Center and Hole
 2 0
@@ -7723,6 +7738,9 @@
 0 93086.dat
 1 Friends Horse Saddle with Stirrups and Top Stud
 2 3
+0 bl_1413pb02.dat
+1 Chicken, Wide Base with Molded Red Comb and Wattle and Printed Black Eyes with Pupils Pattern
+2 15
 0 103918p01.dat
 1 Windscreen 4 x 4 x 2 with Molded Trans-Black Glass Pattern
 2 15
@@ -16354,6 +16372,9 @@
 0 2397.dat
 1 Horse Hitching / Harness Traces
 2 71
+0 167.dat
+1 Bar 1 x 3 with 2 Stud Receptacles &#40;Radio Handle / Telephone Handset&#41;
+2 322
 0 23861.dat
 1 Minifigure, Weapon Blade with Bars and 5 Spikes
 2 37
@@ -17388,9 +17409,6 @@
 2 72
 0 25972.dat
 1 Minifigure, Hair Swept Back with Slight Widow's Peak and Short Sideburns
-2 84
-0 98382p01.dat
-1 Teddy Bear with Black Eyes, Nose, and Mouth, Tan Stomach and Muzzle Pattern
 2 84
 0 bl_3005pb028.dat
 1 Brick 1 x 1 with Popcorn Bucket print

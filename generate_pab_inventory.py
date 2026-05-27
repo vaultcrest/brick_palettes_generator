@@ -56,6 +56,8 @@ STUDIO_PALETTE_DIR = DATA_DIR / "studio_palettes"
 
 STUDIO_EXCLUSIONS_FILE = CACHE_DIR / "studio_exclusions.yaml"
 
+MULTIPACK_DEFINITIONS_FILE = CACHE_DIR / "studio_multipacks.yaml"
+
 studio_exclusions = {}
 
 FORCE_REFRESH = False
@@ -337,6 +339,98 @@ def fetch_bricklink_item_metadata(
         return {}
 
 
+def fetch_bricklink_subsets(
+    item_type,
+    part_no,
+):
+
+    url = "https://api.bricklink.com/api/store/v1/items/" f"{item_type}/{part_no}/subsets"
+
+    try:
+
+        response = requests.get(
+            url,
+            auth=auth,
+            timeout=10,
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        if data["meta"]["code"] != 200:
+
+            return []
+
+        results = []
+
+        for subset in data.get("data", []):
+
+            subset_quantity = subset.get(
+                "quantity",
+                1,
+            )
+
+            entries = subset.get(
+                "entries",
+                [],
+            )
+
+            if not entries:
+                continue
+
+            for entry in entries:
+
+                item = entry.get(
+                    "item",
+                    {},
+                )
+
+                item_type = item.get("type")
+
+                #
+                # Ignore garbage categories
+                #
+
+                if item_type not in {
+                    "PART",
+                    "MINIFIG",
+                }:
+                    continue
+
+                entry_quantity = entry.get(
+                    "quantity",
+                    1,
+                )
+
+                quantity = subset_quantity * entry_quantity
+
+                results.append(
+                    {
+                        "part_no": item.get("no"),
+                        "item_type": item_type,
+                        "quantity": quantity,
+                        "color_id": entry.get(
+                            "color_id",
+                            subset.get("color_id"),
+                        ),
+                        "name": item.get("name"),
+                    }
+                )
+
+        return results
+
+    except Exception as e:
+
+        print(
+            "BrickLink subset lookup failed:",
+            part_no,
+            e,
+        )
+
+        return []
+
+
 # ------------------------------------------------------------
 # LOAD STATE
 # ------------------------------------------------------------
@@ -362,6 +456,13 @@ canonical_db = load_json_file(
     CANONICAL_DB_FILE,
     {},
 )
+
+multipack_definitions = load_yaml_file(
+    MULTIPACK_DEFINITIONS_FILE,
+    default={},
+)
+
+multipack_definitions = {str(key).lower(): value for key, value in multipack_definitions.items()}
 
 print(f"Loaded canonical cache: " f"{len(canonical_db)} entries")
 
@@ -1719,6 +1820,76 @@ def build_canonical_db(results):
         bricklink_part = mapping["bl_part_no"]
 
         #
+        # Multipack Load
+        #
+
+        multipack_definition = multipack_definitions.get(bricklink_part.lower())
+
+        multipack_subsets = []
+
+        if multipack_definition:
+
+            #
+            # Reuse cached subset data
+            #
+
+            existing_multipack = existing.get("multipack", {}) if existing else {}
+
+            cached_subsets = existing_multipack.get("subsets", [])
+
+            if cached_subsets and not FORCE_REFRESH and not FORCE_STUDIO_REFRESH:
+                multipack_subsets = cached_subsets
+
+            else:
+
+                print(f"Fetching multipack subsets: " f"{bricklink_part}")
+
+                multipack_subsets = fetch_bricklink_subsets(
+                    mapping["bl_item_type"],
+                    bricklink_part,
+                )
+
+        #
+        # Resolve subset Studio/LDraw metadata
+        #
+
+        resolved_subsets = []
+
+        for subset in multipack_subsets:
+
+            subset_part = str(subset.get("part_no", "")).lower()
+
+            subset_color = subset.get("color_id") or 0
+
+            subset_resolution = resolve_studio_part(
+                subset_part,
+                [],
+            )
+
+            subset_studio_color = resolve_studio_color(subset_color)
+
+            resolved_subsets.append(
+                {
+                    **subset,
+                    "studio": {
+                        "resolved": bool(subset_resolution["part_file"]),
+                        "part_file": subset_resolution["part_file"],
+                        "resolved_from": subset_resolution["resolved_from"],
+                        "resolution_method": subset_resolution.get("resolution_method"),
+                        "source_type": subset_resolution.get("source_type"),
+                        "candidate_metadata": subset_resolution.get("candidate_metadata"),
+                        "color_id": subset_studio_color,
+                    },
+                    "attempted_parts": subset_resolution.get(
+                        "attempted",
+                        [],
+                    ),
+                }
+            )
+
+        multipack_subsets = resolved_subsets
+
+        #
         # Alternate IDs
         #
 
@@ -1846,6 +2017,11 @@ def build_canonical_db(results):
                 "source_type": (studio_resolution.get("source_type")),
                 "color_id": (studio_color),
                 "resolved": (studio_supported),
+            },
+            "multipack": {
+                "is_multipack": bool(multipack_definition),
+                "definition": multipack_definition,
+                "subsets": multipack_subsets,
             },
             #
             # LEGO metadata
