@@ -60,7 +60,7 @@ MULTIPACK_DEFINITIONS_FILE = CACHE_DIR / "studio_multipacks.yaml"
 
 studio_exclusions = {}
 
-FORCE_REFRESH = False
+FORCE_REFRESH = True
 
 FORCE_STUDIO_REFRESH = True
 
@@ -342,6 +342,7 @@ def fetch_bricklink_item_metadata(
 def fetch_bricklink_subsets(
     item_type,
     part_no,
+    parent_color_id,
 ):
 
     url = "https://api.bricklink.com/api/store/v1/items/" f"{item_type}/{part_no}/subsets"
@@ -410,10 +411,7 @@ def fetch_bricklink_subsets(
                         "part_no": item.get("no"),
                         "item_type": item_type,
                         "quantity": quantity,
-                        "color_id": entry.get(
-                            "color_id",
-                            subset.get("color_id"),
-                        ),
+                        "color_id": parent_color_id,
                         "name": item.get("name"),
                     }
                 )
@@ -1276,11 +1274,6 @@ def resolve_studio_part(
             "resolution_method": "studio_definition",
             "attempted": [],
         }
-    # Debug area
-    # else:
-    #     print("Part not resolved:", bricklink_part.lower())
-
-    # Debug area
 
     #
     # 1. Canonical BL part
@@ -1650,12 +1643,6 @@ def resolve_mapping(
                 manual_overrides,
             )
 
-            #
-            # DEBUG missing BL name
-            #
-            if not mapping.get("bl_name"):
-                print(f"REBRICKABLE FALLBACK: " f"{element_id} " f"-> " f"{mapping['bl_part_no']}" f"-> " f"{mapping}")
-
             stats["rebrickable_fallback"] += 1
     #
     # Permanent failure
@@ -1803,8 +1790,9 @@ def build_canonical_db(results):
                     "alternate_no",
                     [],
                 )
+                if DEBUG:
+                    print(f"Fetched missing metadata: " f"{mapping['bl_part_no']} " f"-> " f"{mapping['bl_name']}")
 
-                print(f"Fetched missing metadata: " f"{mapping['bl_part_no']} " f"-> " f"{mapping['bl_name']}")
         #
         # Remove stale failed mapping
         #
@@ -1847,6 +1835,7 @@ def build_canonical_db(results):
                 multipack_subsets = fetch_bricklink_subsets(
                     mapping["bl_item_type"],
                     bricklink_part,
+                    mapping["bl_color_id"],
                 )
 
         #
@@ -1947,7 +1936,7 @@ def build_canonical_db(results):
 
             continue
 
-        if not studio_part:
+        if not studio_part and not multipack_definition:
 
             studio_supported = False
 
@@ -2105,6 +2094,55 @@ def build_canonical_db(results):
 
 
 # ------------------------------------------------------------
+# INVENTORY EXPANSION
+# ------------------------------------------------------------
+
+
+def expand_entry(entry):
+
+    multipack = entry.get("multipack", {})
+
+    #
+    # Normal part
+    #
+
+    if not multipack.get("is_multipack"):
+
+        return [entry]
+
+    expanded = []
+
+    subsets = multipack.get("subsets", [])
+
+    for subset in subsets:
+        if not subset.get("part_no"):
+            continue
+        quantity = subset.get("quantity", 1)
+
+        for _ in range(quantity):
+
+            expanded.append(
+                {
+                    "lego": entry["lego"],
+                    "bricklink": {
+                        "part_no": subset["part_no"],
+                        "color_id": subset.get("color_id", 0),
+                        "item_type": subset.get("item_type", "PART"),
+                        "name": subset.get("name"),
+                        "alternate_no": [],
+                    },
+                    "studio": subset.get("studio", {}),
+                    "price": entry["price"],
+                    "channel": entry["channel"],
+                    "source": "multipack_subset",
+                    "parent_multipack": entry["bricklink"]["part_no"],
+                }
+            )
+
+    return expanded
+
+
+# ------------------------------------------------------------
 # XML EXPORT
 # ------------------------------------------------------------
 
@@ -2113,59 +2151,62 @@ def build_xml(entries):
 
     inventory = ET.Element("INVENTORY")
 
-    for entry in entries:
+    for original_entry in entries:
 
-        item = ET.SubElement(
-            inventory,
-            "ITEM",
-        )
+        expanded_entries = expand_entry(original_entry)
 
-        ET.SubElement(
-            item,
-            "ITEMTYPE",
-        ).text = ITEM_TYPE_MAP.get(
-            entry["bricklink"]["item_type"],
-            "P",
-        )
+        for entry in expanded_entries:
+            item = ET.SubElement(
+                inventory,
+                "ITEM",
+            )
 
-        ET.SubElement(
-            item,
-            "ITEMID",
-        ).text = entry[
-            "bricklink"
-        ]["part_no"]
+            ET.SubElement(
+                item,
+                "ITEMTYPE",
+            ).text = ITEM_TYPE_MAP.get(
+                entry["bricklink"]["item_type"],
+                "P",
+            )
 
-        ET.SubElement(
-            item,
-            "COLOR",
-        ).text = str(entry["bricklink"]["color_id"])
+            ET.SubElement(
+                item,
+                "ITEMID",
+            ).text = entry[
+                "bricklink"
+            ]["part_no"]
 
-        ET.SubElement(
-            item,
-            "MAXPRICE",
-        ).text = f"{entry['price']['cent_amount'] / 100:.4f}"
+            ET.SubElement(
+                item,
+                "COLOR",
+            ).text = str(entry["bricklink"]["color_id"])
 
-        ET.SubElement(
-            item,
-            "MINQTY",
-        ).text = "1"
+            ET.SubElement(
+                item,
+                "MAXPRICE",
+            ).text = f"{entry['price']['cent_amount'] / 100:.4f}"
 
-        ET.SubElement(
-            item,
-            "CONDITION",
-        ).text = "X"
+            ET.SubElement(
+                item,
+                "MINQTY",
+            ).text = "1"
 
-        ET.SubElement(
-            item,
-            "REMARKS",
-        ).text = (
-            f"{entry['lego']['name']} " f"(LEGO Element " f"{entry['lego']['element_id']})"
-        )
+            ET.SubElement(
+                item,
+                "CONDITION",
+            ).text = "X"
 
-        ET.SubElement(
-            item,
-            "NOTIFY",
-        ).text = "N"
+            ET.SubElement(
+                item,
+                "REMARKS",
+            ).text = (
+                f"{entry['lego']['name']} " f"(LEGO Element " f"{entry['lego']['element_id']})"
+            )
+
+            ET.SubElement(
+                item,
+                "NOTIFY",
+            ).text = "N"
 
     xml_bytes = ET.tostring(
         inventory,
@@ -2189,7 +2230,7 @@ def build_palette(entries, name):
         "14",
         "-1",
     ]
-
+    seen_palette_entries = set()
     #
     # Emit palette entries directly
     #
@@ -2198,31 +2239,42 @@ def build_palette(entries, name):
     # Studio palettes behave better when
     # each LEGO inventory entry is preserved.
     #
+    for original_entry in entries:
 
-    for entry in entries:
+        expanded_entries = expand_entry(original_entry)
 
-        if not entry["studio"]["resolved"]:
-            continue
+        for entry in expanded_entries:
 
-        part_file = entry["studio"]["part_file"]
+            if not entry["studio"]["resolved"]:
+                continue
 
-        bricklink_name = entry["bricklink"]["name"] or entry["lego"]["name"] or part_file
+            part_file = entry["studio"]["part_file"]
 
-        #
-        # Skip DUPLO in Studio palettes
-        #
+            bricklink_name = entry["bricklink"]["name"] or entry["lego"]["name"] or part_file
 
-        if "duplo" in bricklink_name.lower():
+            #
+            # Skip DUPLO in Studio palettes
+            #
 
-            continue
+            if "duplo" in bricklink_name.lower():
 
-        color_id = entry["studio"]["color_id"]
+                continue
 
-        lines.append(f"0 {part_file}")
+            color_id = entry["studio"]["color_id"]
 
-        lines.append(f"1 {bricklink_name}")
+            palette_key = (
+                part_file,
+                color_id,
+            )
 
-        lines.append(f"2 {color_id}")
+            if palette_key in seen_palette_entries:
+                continue
+
+            seen_palette_entries.add(palette_key)
+
+            lines.append(f"0 {part_file}")
+            lines.append(f"1 {bricklink_name}")
+            lines.append(f"2 {color_id}")
 
     return "\n".join(lines)
 

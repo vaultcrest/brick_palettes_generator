@@ -1,16 +1,58 @@
-'6601726':
-  bl_part_no: 107096pb01
-  bl_color_id: 120
-  ldraw_color_id: 15
+'4653091':
+  bl_color_id: 86
   bl_item_type: PART
-  source: manual_override
+  bl_part_no: 3049c
+  source: manual
+'6489204':
+  bl_alternate_no: []
+  bl_color_id: 36
+  bl_item_type: PART
+  bl_name: Windscreen 6 x 4 x 1 Hexagonal with Handle
+  bl_part_no: '27262'
+  source: rebrickable_fallback
+'6503480':
+  bl_alternate_no: []
+  bl_color_id: 98
+  bl_item_type: PART
+  bl_name: Wave / Flame Rounded Large [Plain]
+  bl_part_no: '85959'
+  source: rebrickable_fallback
+'6513991':
+  bl_alternate_no: []
+  bl_color_id: 18
+  bl_item_type: PART
+  bl_name: Wave / Flame Rounded Large with Marbled Trans-Brown Pattern
+  bl_part_no: 85959pb06
+  source: rebrickable_fallback
+'6516280':
+  bl_alternate_no: []
+  bl_color_id: 228
+  bl_item_type: PART
+  bl_name: Glass for Window 1 x 4 x 6
+  bl_part_no: '57895'
+  source: rebrickable_fallback
+'6518954':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Brick Curved 1 x 2 x 1 2/3 with 1 Cutout
+  bl_part_no: '5907'
+  source: rebrickable_fallback
 '6575681':
   bl_color_id: 95
   bl_item_type: PART
   bl_part_no: '3626'
   source: manual
-'4653091':
-  bl_color_id: 86
+'6590056':
+  bl_alternate_no: []
+  bl_color_id: 42
   bl_item_type: PART
-  bl_part_no: '3049c'
-  source: manual
+  bl_name: Tile 2 x 4 with Groove
+  bl_part_no: '87079'
+  source: rebrickable_fallback
+'6601726':
+  bl_color_id: 120
+  bl_item_type: PART
+  bl_part_no: 107096pb01
+  ldraw_color_id: 15
+  source: manual_override

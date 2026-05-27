@@ -39,6 +39,48 @@
   notes:
     - "Minifigure, Hair Female Long Wavy, High Back Ponytail"
 
+# 98393:
+#   reason: Muiltipack Parent
+#   category: N/A
+#   skip_studio: true
+#   notes:
+#     - "Friends Accessories, Medical, 10 in Bag &#40;Multipack&#41"
+
+# 11402:
+#   reason: Muiltipack Parent
+#   category: N/A
+#   skip_studio: true
+#   notes:
+#     - "Minifigure, Utensil Tools, 9 in Bag &#40;Multipack&#41;"
+
+# 85489:
+#   reason: Muiltipack Parent
+#   category: N/A
+#   skip_studio: true
+#   notes:
+#     - "Train Wheel RC, Spoked with Technic Axle Hole and Counterweight, Blind and Flanged Driver, 3 in Bag &#40;Multipack&#41;"
+
+# 36451:
+#   reason: Muiltipack Parent
+#   category: N/A
+#   skip_studio: true
+#   notes:
+#     - "Rock Faceted with Small Pin &#40;Marvel Infinity Stone&#41;, 4 on Sprue"
+
+# 92355:
+#   reason: Muiltipack Parent
+#   category: N/A
+#   skip_studio: true
+#   notes:
+#     - "Friends Accessories, Animal Show and Grooming Supplies, 16 in Bag &#40;Multipack&#41;"
+
+
+# 49595:
+#   reason: Muiltipack Parent
+#   category: N/A
+#   skip_studio: true
+#   notes:
+#     - "Friends Accessories, Marine Life, 12 in Bag &#40;Multipack&#41;"
 
 3756:
   reason: no digital geometry exists
