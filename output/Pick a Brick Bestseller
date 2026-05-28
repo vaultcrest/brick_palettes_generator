@@ -20881,6 +20881,9 @@
 0 93274.dat
 1 Bracket 1 x 2 - 2 x 4
 2 10
+0 73825.dat
+1 Bracket 1 x 1 - 1 x 2 Inverted
+2 10
 0 70681.dat
 1 Arch 1 x 3 Inverted
 2 2
@@ -24019,6 +24022,9 @@
 0 3005744.dat
 1 Plate, Round 1 x 1
 2 43
+0 3005744.dat
+1 Plate, Round 1 x 1
+2 37
 0 49668.dat
 1 Plate, Modified 1 x 1 with Tooth Horizontal
 2 57
@@ -25881,9 +25887,6 @@
 2 14
 0 bl_3626pb3989.dat
 1 Minifigure, Head Female Black Eyebrows, One Raised, Eyelashes, Nougat Lips and Smile Crease, Closed Mouth Frown Pattern
-2 78
-0 bl_3626pb3997.dat
-1 Minifigure, Head Dual Sided Dark Tan Eyebrows, White Pupils, Dark Orange Cheek Lines and Creases, Frown / Open Mouth Scowl Pattern &#40;Director Krennic&#41;
 2 78
 0 bl_3626pb3994.dat
 1 Minifigure, Head Dual Sided Reddish Brown Eyebrows, Dark Orange Wrinkles, Frown / Open Mouth Scowl Pattern &#40;General Tagge&#41;
@@ -28519,9 +28522,3 @@
 0 73081.dat
 1 Vehicle, Steering Stand 1 x 2 with Black Steering Wheel
 2 4
-0 73825.dat
-1 Bracket 1 x 1 - 1 x 2 Inverted
-2 10
-0 3005744.dat
-1 Plate, Round 1 x 1
-2 37

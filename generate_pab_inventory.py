@@ -60,7 +60,7 @@ MULTIPACK_DEFINITIONS_FILE = CACHE_DIR / "studio_multipacks.yaml"
 
 studio_exclusions = {}
 
-FORCE_REFRESH = True
+FORCE_REFRESH = False
 
 FORCE_STUDIO_REFRESH = True
 

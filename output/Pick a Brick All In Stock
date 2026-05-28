@@ -22691,7 +22691,7 @@
 1 Technic, Panel Car Mudguard Arched #42 13 x 2 x 5 Rounded Top
 2 4
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 4
 0 80326.dat
 1 Flag 2 x 2 Square with Flared Edge
@@ -23129,7 +23129,7 @@
 1 Brick, Round Tube 1 x 1 d. 90 degrees Elbow Macaroni - No Stud - Type 2 - Axle Hole
 2 322
 0 80545.dat
-1 Slope 45 2 x 4 x 1 1/3 Double, Tapered 
+1 Slope 45 2 x 4 x 1 1/3 Double, Tapered
 2 71
 0 87552.dat
 1 Panel 1 x 2 x 2 with Side Supports - Hollow Studs
@@ -25157,7 +25157,7 @@
 1 Tile 1 x 3
 2 323
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 0
 0 27925.dat
 1 Tile, Round Corner 2 x 2 Macaroni
@@ -29308,6 +29308,9 @@
 0 93274.dat
 1 Bracket 1 x 2 - 2 x 4
 2 10
+0 73825.dat
+1 Bracket 1 x 1 - 1 x 2 Inverted
+2 10
 0 70681.dat
 1 Arch 1 x 3 Inverted
 2 2
@@ -30773,7 +30776,7 @@
 1 Brick, Modified 1 x 2 with Stud on Side with Bottom Stud Holder
 2 0
 0 80545.dat
-1 Slope 45 2 x 4 x 1 1/3 Double, Tapered 
+1 Slope 45 2 x 4 x 1 1/3 Double, Tapered
 2 0
 0 3049d.dat
 1 Slope 45 2 x 1 Double / Inverted with Bottom Stud Holder
@@ -31043,7 +31046,7 @@
 1 Technic, Panel Car Mudguard Arched #42 13 x 2 x 5 Rounded Top
 2 191
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 191
 0 89679.dat
 1 Technic, Panel Curved 2 x 1 x 1
@@ -31058,7 +31061,7 @@
 1 Brick, Round 2 x 2 Sphere with Stud / Robot Body
 2 14
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 71
 0 3678b.dat
 1 Slope 65 2 x 2 x 2 with Bottom Tube
@@ -31775,7 +31778,7 @@
 1 Technic, Panel Car Mudguard Arched #43 11 x 2 x 5 Rounded Top
 2 0
 0 80545.dat
-1 Slope 45 2 x 4 x 1 1/3 Double, Tapered 
+1 Slope 45 2 x 4 x 1 1/3 Double, Tapered
 2 288
 0 18646.dat
 1 Plate, Round Half 3 x 6 with 1 x 2 Cutout
@@ -35170,6 +35173,9 @@
 0 3005744.dat
 1 Plate, Round 1 x 1
 2 43
+0 3005744.dat
+1 Plate, Round 1 x 1
+2 37
 0 49668.dat
 1 Plate, Modified 1 x 1 with Tooth Horizontal
 2 57
@@ -39295,9 +39301,6 @@
 0 bl_3626pb3963.dat
 1 Minifigure, Head Black Eyebrows, Reddish Brown Cheek Lines and Chin Dimple, Slight Smile Pattern
 2 84
-0 bl_3626pb3997.dat
-1 Minifigure, Head Dual Sided Dark Tan Eyebrows, White Pupils, Dark Orange Cheek Lines and Creases, Frown / Open Mouth Scowl Pattern &#40;Director Krennic&#41;
-2 78
 0 bl_3626pb3994.dat
 1 Minifigure, Head Dual Sided Reddish Brown Eyebrows, Dark Orange Wrinkles, Frown / Open Mouth Scowl Pattern &#40;General Tagge&#41;
 2 78
@@ -44471,7 +44474,7 @@
 1 Torso Sleeveless Top with Lime Palm Leaves, Bright Light Blue Pearl Necklace, Yellow Neck Pattern / Yellow Arms / Yellow Hands
 2 15
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 10
 0 2509.dat
 1 Technic, Panel Car Mudguard Arched #32 11 x 2 x 5 Straight Top
@@ -45577,9 +45580,3 @@
 0 73081.dat
 1 Vehicle, Steering Stand 1 x 2 with Black Steering Wheel
 2 4
-0 73825.dat
-1 Bracket 1 x 1 - 1 x 2 Inverted
-2 10
-0 3005744.dat
-1 Plate, Round 1 x 1
-2 37
