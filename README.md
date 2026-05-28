@@ -31,8 +31,9 @@ output/Pick a Brick Out Of Stock
 into your Studio palette folder:
 
 ```text
-C:\Users\<your-user>\AppData\Local\Stud.io\Buckets\Folders
+%LOCALAPPDATA%\Stud.io\Buckets\Folders
 ```
+
 ![Studio Palette Picker](images/pallete_picker.png)
 Then restart Studio.
 
