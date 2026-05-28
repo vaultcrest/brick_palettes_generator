@@ -17,6 +17,27 @@ using:
 
 ---
 
+## Using Generated Studio Palettes
+
+After generating the palette files, copy the generated palette folders from:
+
+```text
+output/Pick a Brick All
+output/Pick a Brick Bestseller
+output/Pick a Brick Standard
+output/Pick a Brick Out Of Stock
+```
+
+into your Studio palette folder:
+
+```text
+C:\Users\<your-user>\AppData\Local\Stud.io\Buckets\Folders
+```
+![Studio Palette Picker](images/pallete_picker.png)
+Then restart Studio.
+
+The generated palettes will appear inside Studio's palette selection menu.
+
 ## Features
 
 - Incremental canonical DB updates
