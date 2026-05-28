@@ -19,7 +19,7 @@ using:
 
 ## Using Generated Studio Palettes
 
-After generating the palette files, copy the generated palette folders from:
+After generating the palette files, or using the current ones in this repository, copy the generated palette folders from:
 
 ```text
 output/Pick a Brick All
