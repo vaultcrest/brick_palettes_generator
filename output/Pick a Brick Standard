@@ -442,6 +442,9 @@
 0 bl_973c01.dat
 1 Torso Plain / White Arms / Yellow Hands
 2 1
+0 bl_973c07.dat
+1 Torso Plain / Blue Arms / Yellow Hands
+2 1
 0 bl_973c02.dat
 1 Torso Plain / Red Arms / Yellow Hands
 2 4
@@ -5747,7 +5750,7 @@
 1 Technic, Panel Car Mudguard Arched #42 13 x 2 x 5 Rounded Top
 2 4
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 4
 0 80326.dat
 1 Flag 2 x 2 Square with Flared Edge
@@ -5909,7 +5912,7 @@
 1 Brick, Round 2 x 2 D. 45 degrees Elbow &#40;25.5mm Standing Height&#41;
 2 14
 0 80545.dat
-1 Slope 45 2 x 4 x 1 1/3 Double, Tapered 
+1 Slope 45 2 x 4 x 1 1/3 Double, Tapered
 2 71
 0 18892.dat
 1 Brick, Modified 2 x 4 with Wheels Holder with 2 x 2 Cutout and Hole
@@ -6665,7 +6668,7 @@
 1 Minifigure, Headgear Hat, Police
 2 272
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 0
 0 bl_973pb4780c01.dat
 1 Torso Safety Vest with Silver and Orange Reflective Stripes over Dark Turquoise Shirt, Radio Pattern / Dark Turquoise Arms / Dark Bluish Gray Hands
@@ -6898,8 +6901,8 @@
 0 35157.dat
 1 Glass for Train Door with Lip on All Sides
 2 47
-0 bl_2665.dat
-1 Minifigure, Weapon Pack Monkie Kid, Swords and Accessories, 8 in Bag &#40;Multipack&#41;
+0 2665.dat
+1 Minifigure, Weapon Sword Curved Blade with Bar, Rectangular Hilt, and Hole
 2 297
 0 71709.dat
 1 Technic, Panel Plate 3 x 7 x 1
@@ -9176,7 +9179,7 @@
 1 Wedge 5 x 2 Left
 2 70
 0 80545.dat
-1 Slope 45 2 x 4 x 1 1/3 Double, Tapered 
+1 Slope 45 2 x 4 x 1 1/3 Double, Tapered
 2 0
 0 3049d.dat
 1 Slope 45 2 x 1 Double / Inverted with Bottom Stud Holder
@@ -9308,7 +9311,7 @@
 1 Technic, Panel Car Mudguard Arched #42 13 x 2 x 5 Rounded Top
 2 191
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 191
 0 89679.dat
 1 Technic, Panel Curved 2 x 1 x 1
@@ -9323,7 +9326,7 @@
 1 Brick, Round 2 x 2 Sphere with Stud / Robot Body
 2 14
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 71
 0 37467-f1.dat
 1 Hose, Pneumatic 4mm D. V2 Precut 13L / 10.4cm
@@ -9632,7 +9635,7 @@
 1 Technic, Panel Car Mudguard Arched #43 11 x 2 x 5 Rounded Top
 2 0
 0 80545.dat
-1 Slope 45 2 x 4 x 1 1/3 Double, Tapered 
+1 Slope 45 2 x 4 x 1 1/3 Double, Tapered
 2 288
 0 18646.dat
 1 Plate, Round Half 3 x 6 with 1 x 2 Cutout
@@ -14821,12 +14824,6 @@
 0 79393.dat
 1 Tile, Round Corner 3 x 3 Macaroni
 2 82
-0 20551.dat
-1 Minifigure Cape Cloth, High Rounded Collar
-2 85
-0 20551.dat
-1 Minifigure Cape Cloth, High Rounded Collar
-2 0
 0 4151b.dat
 1 Plate, Modified 8 x 8 Lattice with Hole in Center
 2 484
@@ -16276,9 +16273,6 @@
 0 3387.dat
 1 Vehicle, Mudguard 4 x 2 1/2 x 2 with Arch Round
 2 226
-0 93087.dat
-1 Friends Horse Bridle
-2 0
 0 93604.dat
 1 Wedge 3 x 4 x 2/3 Triple Curved
 2 226
@@ -16403,7 +16397,7 @@
 1 Torso Sleeveless Top with Lime Palm Leaves, Bright Light Blue Pearl Necklace, Yellow Neck Pattern / Yellow Arms / Yellow Hands
 2 15
 0 80285.dat
-1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick 
+1 Technic, Panel Curved 2 x 5 x 3 Double Modified L-Shape Quarter Ellipse Thick
 2 10
 0 2509.dat
 1 Technic, Panel Car Mudguard Arched #32 11 x 2 x 5 Straight Top

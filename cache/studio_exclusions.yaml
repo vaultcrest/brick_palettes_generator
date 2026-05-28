@@ -4246,6 +4246,11 @@ x127c30pb02:
   category: cloth
   skip_studio: true
 
+20551:
+  reason: cloth part does not exist
+  category: cloth
+  skip_studio: true
+
 86399:
   reason: cloth part does not exist
   category: cloth
@@ -4278,3 +4283,10 @@ x400c09:
   skip_studio: true
   notes:
     - "Electric, Fiber Optics Cable Wide  9L / 7.2cm"
+
+93087:
+  reason: no digital geometry exists
+  category: cloth
+  skip_studio: true
+  notes:
+    - "Friends Horse Bridle"
