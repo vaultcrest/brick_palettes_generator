@@ -2,44 +2,9 @@
 <INVENTORY>
   <ITEM>
     <ITEMTYPE>P</ITEMTYPE>
-    <ITEMID>49595</ITEMID>
-    <COLOR>236</COLOR>
-    <REMARKS>LEGO: ACCESSORIES, MARINE LIFE, NO. 1 | BL: Friends Accessories, Marine Life, 12 in Bag &amp;#40;Multipack&amp;#41; | Reject: unresolved | Attempts: 49595.dat, bl_49595.dat</REMARKS>
-    <MINQTY>1</MINQTY>
-  </ITEM>
-  <ITEM>
-    <ITEMTYPE>P</ITEMTYPE>
-    <ITEMID>92355</ITEMID>
-    <COLOR>71</COLOR>
-    <REMARKS>LEGO: ACCEC, ANIMAL W.SHAFT 1,5/3,2 | BL: Friends Accessories, Animal Show and Grooming Supplies, 16 in Bag &amp;#40;Multipack&amp;#41; | Reject: unresolved | Attempts: 92355.dat, bl_92355.dat</REMARKS>
-    <MINQTY>1</MINQTY>
-  </ITEM>
-  <ITEM>
-    <ITEMTYPE>P</ITEMTYPE>
-    <ITEMID>36451</ITEMID>
-    <COLOR>19</COLOR>
-    <REMARKS>LEGO: DIAMOND, W/1,5 SHAFT | BL: Rock Faceted with Small Pin &amp;#40;Marvel Infinity Stone&amp;#41;, 4 on Sprue | Reject: unresolved | Attempts: 36451.dat, bl_36451.dat</REMARKS>
-    <MINQTY>1</MINQTY>
-  </ITEM>
-  <ITEM>
-    <ITEMTYPE>P</ITEMTYPE>
-    <ITEMID>85489</ITEMID>
-    <COLOR>11</COLOR>
-    <REMARKS>LEGO: 3 TRAIN WHEEL Ø30 M+U FLANGE | BL: Train Wheel RC, Spoked with Technic Axle Hole and Counterweight, Blind and Flanged Driver, 3 in Bag &amp;#40;Multipack&amp;#41; | Reject: unresolved | Attempts: 85489.dat, bl_85489.dat</REMARKS>
-    <MINQTY>1</MINQTY>
-  </ITEM>
-  <ITEM>
-    <ITEMTYPE>P</ITEMTYPE>
-    <ITEMID>98393</ITEMID>
-    <COLOR>152</COLOR>
-    <REMARKS>LEGO: ACCESSORIES, MEDICAL | BL: Friends Accessories, Medical, 10 in Bag &amp;#40;Multipack&amp;#41; | Reject: unresolved | Attempts: 98393.dat, bl_98393.dat</REMARKS>
-    <MINQTY>1</MINQTY>
-  </ITEM>
-  <ITEM>
-    <ITEMTYPE>P</ITEMTYPE>
-    <ITEMID>11402</ITEMID>
-    <COLOR>95</COLOR>
-    <REMARKS>LEGO: TOOL WHEEL | BL: Minifigure, Utensil Tools, 9 in Bag &amp;#40;Multipack&amp;#41; | Reject: unresolved | Attempts: 11402.dat, bl_11402.dat</REMARKS>
+    <ITEMID>973pb6581c01</ITEMID>
+    <COLOR>1</COLOR>
+    <REMARKS>LEGO: MINI UPPER PART, NO. 8048 | BL: Torso Chef with 3 Buttons, Sash, Japanese Logogram &amp;#39;??&amp;#39; &amp;#40;Sushi&amp;#41; on Front Pocket Pattern / White Arms / Yellow Hands | Reject: unresolved | Attempts: 973pb6581c01.dat, bl_973pb6581c01.dat, 973bpb6581c01.dat, 973cpb6581c01.dat, 973dpb6581c01.dat</REMARKS>
     <MINQTY>1</MINQTY>
   </ITEM>
 </INVENTORY>

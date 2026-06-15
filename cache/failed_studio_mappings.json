@@ -1,1 +1,53 @@
-{}
+{
+  "6602005": {
+    "alternate_no": [],
+    "attempted_parts": [
+      {
+        "confidence": 1.0,
+        "generated_from": "973pb6581c01",
+        "part_file": "973pb6581c01.dat",
+        "resolution_type": "exact",
+        "source": "bricklink_canonical"
+      },
+      {
+        "confidence": 0.99,
+        "generated_from": "973pb6581c01",
+        "part_file": "bl_973pb6581c01.dat",
+        "resolution_type": "alias",
+        "source": "generated_bl_alias"
+      },
+      {
+        "confidence": 0.95,
+        "generated_from": "973pb6581c01",
+        "part_file": "973bpb6581c01.dat",
+        "resolution_type": "print_revision",
+        "source": "generated_print_revision"
+      },
+      {
+        "confidence": 0.95,
+        "generated_from": "973pb6581c01",
+        "part_file": "973cpb6581c01.dat",
+        "resolution_type": "print_revision",
+        "source": "generated_print_revision"
+      },
+      {
+        "confidence": 0.95,
+        "generated_from": "973pb6581c01",
+        "part_file": "973dpb6581c01.dat",
+        "resolution_type": "print_revision",
+        "source": "generated_print_revision"
+      }
+    ],
+    "bricklink_color_id": 1,
+    "bricklink_name": "Torso Chef with 3 Buttons, Sash, Japanese Logogram &#39;??&#39; &#40;Sushi&#41; on Front Pocket Pattern / White Arms / Yellow Hands",
+    "bricklink_part": "973pb6581c01",
+    "lego_name": "MINI UPPER PART, NO. 8048",
+    "original_part": "973pb6581c01",
+    "reject_reason": "unresolved",
+    "resolution_candidates": [
+      "973pb6581c01"
+    ],
+    "studio_color_id": 15,
+    "timestamp": 1781133348.8364036
+  }
+}

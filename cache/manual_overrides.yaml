@@ -3,6 +3,14 @@
   bl_item_type: PART
   bl_part_no: 3049c
   source: manual
+'6474068':
+  bl_alternate_no: []
+  bl_color_id: 156
+  bl_item_type: PART
+  bl_name: Duplo Figure Child with Hair and Riding Helmet Orange, Bright Bluish Grey
+    Legs, Medium Blue Jacket print
+  bl_part_no: 47205pb113
+  source: rebrickable_fallback
 '6489204':
   bl_alternate_no: []
   bl_color_id: 36
@@ -17,12 +25,26 @@
   bl_name: Wave / Flame Rounded Large [Plain]
   bl_part_no: '85959'
   source: rebrickable_fallback
+'6510737':
+  bl_alternate_no: []
+  bl_color_id: 115
+  bl_item_type: PART
+  bl_name: Hair Wavy and Windblown to One Side
+  bl_part_no: '32602'
+  source: rebrickable_fallback
 '6513991':
   bl_alternate_no: []
   bl_color_id: 18
   bl_item_type: PART
   bl_name: Wave / Flame Rounded Large with Marbled Trans-Brown Pattern
   bl_part_no: 85959pb06
+  source: rebrickable_fallback
+'6514360':
+  bl_alternate_no: []
+  bl_color_id: 15
+  bl_item_type: PART
+  bl_name: Technic Wedge Belt Wheel [aka Pulley]
+  bl_part_no: '4185'
   source: rebrickable_fallback
 '6516280':
   bl_alternate_no: []
@@ -37,6 +59,21 @@
   bl_item_type: PART
   bl_name: Brick Curved 1 x 2 x 1 2/3 with 1 Cutout
   bl_part_no: '5907'
+  source: rebrickable_fallback
+'6555881':
+  bl_alternate_no: []
+  bl_color_id: 17
+  bl_item_type: PART
+  bl_name: Light Brick 2 x 3 x 1 1/3 with Dark Bluish Gray Base [Red LED]
+  bl_part_no: 54930c01
+  source: rebrickable_fallback
+'6569857':
+  bl_alternate_no: []
+  bl_color_id: 4
+  bl_item_type: PART
+  bl_name: Duplo Figure with Thick Hair Combed Forward Reddish Brown, with Bright
+    Light Blue Overall
+  bl_part_no: 47394pb355
   source: rebrickable_fallback
 '6575681':
   bl_color_id: 95
@@ -56,3 +93,74 @@
   bl_part_no: 107096pb01
   ldraw_color_id: 15
   source: manual_override
+'6655021':
+  bl_alternate_no: []
+  bl_color_id: 155
+  bl_item_type: PART
+  bl_name: Brick Arch 1 x 4 x 3
+  bl_part_no: '80543'
+  source: rebrickable_fallback
+'6655023':
+  bl_alternate_no: []
+  bl_color_id: 103
+  bl_item_type: PART
+  bl_name: Brick Arch 1 x 4 x 3
+  bl_part_no: '80543'
+  source: rebrickable_fallback
+'6655872':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Brick Curved 2 x 4 Double, No Studs, with Groove
+  bl_part_no: 6192b
+  source: rebrickable_fallback
+'6661103':
+  bl_alternate_no: []
+  bl_color_id: 120
+  bl_item_type: PART
+  bl_name: Hair, Long Curly, Internal Supports
+  bl_part_no: '5828'
+  source: rebrickable_fallback
+'6661191':
+  bl_alternate_no: []
+  bl_color_id: 12
+  bl_item_type: PART
+  bl_name: Windscreen 1 x 14 x 6 Tapered
+  bl_part_no: '80573'
+  source: rebrickable_fallback
+'6668425':
+  bl_alternate_no: []
+  bl_color_id: 5
+  bl_item_type: PART
+  bl_name: Creature Body Part, Dragon Head with Trans-Dark Pink Horns Pattern and
+    Magenta Eyes, Dark Purple Scales, Black Markings print
+  bl_part_no: 82276pb08
+  source: rebrickable_fallback
+'6670628':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Panel 1 x 2 x 1 with Rounded Corners and Central Divider
+  bl_part_no: '93095'
+  source: rebrickable_fallback
+'6670644':
+  bl_alternate_no: []
+  bl_color_id: 110
+  bl_item_type: PART
+  bl_name: Panel 1 x 2 x 1 with Rounded Corners and Central Divider
+  bl_part_no: '93095'
+  source: rebrickable_fallback
+'6670646':
+  bl_alternate_no: []
+  bl_color_id: 2
+  bl_item_type: PART
+  bl_name: Panel 1 x 2 x 1 with Rounded Corners and Central Divider
+  bl_part_no: '93095'
+  source: rebrickable_fallback
+'6671193':
+  bl_alternate_no: []
+  bl_color_id: 156
+  bl_item_type: PART
+  bl_name: Panel 1 x 2 x 1 with Rounded Corners and Central Divider
+  bl_part_no: '93095'
+  source: rebrickable_fallback

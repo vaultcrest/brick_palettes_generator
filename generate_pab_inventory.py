@@ -2151,62 +2151,95 @@ def build_xml(entries):
 
     inventory = ET.Element("INVENTORY")
 
+    #
+    # Deduplicate by final BrickLink identity.
+    #
+    # Multiple LEGO element IDs may map
+    # to the same BrickLink part/color.
+    #
+    deduped_entries = {}
+
     for original_entry in entries:
 
         expanded_entries = expand_entry(original_entry)
 
         for entry in expanded_entries:
-            item = ET.SubElement(
-                inventory,
-                "ITEM",
-            )
 
-            ET.SubElement(
-                item,
-                "ITEMTYPE",
-            ).text = ITEM_TYPE_MAP.get(
+            key = (
                 entry["bricklink"]["item_type"],
-                "P",
+                entry["bricklink"]["part_no"],
+                entry["bricklink"]["color_id"],
             )
 
-            ET.SubElement(
-                item,
-                "ITEMID",
-            ).text = entry[
-                "bricklink"
-            ]["part_no"]
+            #
+            # Keep first occurrence.
+            #
+            # Later we can prefer:
+            # PAB over BAP
+            # lower price
+            # etc.
+            #
 
-            ET.SubElement(
-                item,
-                "COLOR",
-            ).text = str(entry["bricklink"]["color_id"])
+            if key not in deduped_entries:
+                deduped_entries[key] = entry
 
-            ET.SubElement(
-                item,
-                "MAXPRICE",
-            ).text = f"{entry['price']['cent_amount'] / 100:.4f}"
+    print(f"XML entries: {len(deduped_entries)}")
 
-            ET.SubElement(
-                item,
-                "MINQTY",
-            ).text = "1"
+    for entry in deduped_entries.values():
 
-            ET.SubElement(
-                item,
-                "CONDITION",
-            ).text = "X"
+        item = ET.SubElement(
+            inventory,
+            "ITEM",
+        )
 
-            ET.SubElement(
-                item,
-                "REMARKS",
-            ).text = (
-                f"{entry['lego']['name']} " f"(LEGO Element " f"{entry['lego']['element_id']})"
-            )
+        ET.SubElement(
+            item,
+            "ITEMTYPE",
+        ).text = ITEM_TYPE_MAP.get(
+            entry["bricklink"]["item_type"],
+            "P",
+        )
 
-            ET.SubElement(
-                item,
-                "NOTIFY",
-            ).text = "N"
+        ET.SubElement(
+            item,
+            "ITEMID",
+        ).text = entry[
+            "bricklink"
+        ]["part_no"]
+
+        ET.SubElement(
+            item,
+            "COLOR",
+        ).text = str(entry["bricklink"]["color_id"])
+
+        ET.SubElement(
+            item,
+            "MAXPRICE",
+        ).text = f"{entry['price']['cent_amount'] / 100:.4f}"
+
+        ET.SubElement(
+            item,
+            "MINQTY",
+        ).text = "1"
+
+        ET.SubElement(
+            item,
+            "CONDITION",
+        ).text = "X"
+
+        remarks = f"{entry['lego']['name']} " f"(LEGO Element {entry['lego']['element_id']})"
+
+        remarks = remarks.replace("&", " and ").replace("–", "-").replace("—", "-")
+
+        ET.SubElement(
+            item,
+            "REMARKS",
+        ).text = remarks
+
+        ET.SubElement(
+            item,
+            "NOTIFY",
+        ).text = "N"
 
     xml_bytes = ET.tostring(
         inventory,
