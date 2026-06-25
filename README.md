@@ -1,5 +1,53 @@
 # LEGO Pick a Brick Palette Generator
 
+## Current Status / Known Issues (as of 2026-06-24)
+
+### API Header Fix Required
+
+LEGO's GraphQL API now requires two additional headers that were not in the original implementation:
+
+```python
+headers = {
+    "Origin": "https://www.lego.com",           # ← required, was missing
+    "x-locale": "en-US",                         # ← required, was missing
+    "Referer": "https://www.lego.com/en-us/pick-and-build/pick-a-brick",
+    "User-Agent": "Mozilla/5.0 ...",
+}
+```
+
+### Query Fix Required
+
+The `$sku: String` variable in the GraphQL operation declaration now causes a validation error. Replace:
+
+```graphql
+query PickABrickQuery($input: ElementQueryInput!, $sku: String) {
+  ...
+  quantityInSet(sku: $sku)
+```
+
+With:
+
+```graphql
+query PickABrickQuery($input: ElementQueryInput!) {
+  ...
+  quantityInSet(sku: null)
+```
+
+### Planned: Multi-Region + Database-First Overhaul
+
+This generator currently writes to `cache/canonical_mapping.json` as an intermediate file, which is then seeded into PostgreSQL. The planned overhaul makes PostgreSQL the source of truth:
+
+- Loop over ~12 regional locales (US, GB, CA, AU, NZ, EU, SE, NO, DK, PL, CZ, KR)
+- Write prices directly to a `lego_element_prices` table with `locale` + `in_stock` columns
+- Eliminate the JSON intermediate file
+
+Confirmed working locales (tested 2026-06-24):
+`en-us`, `en-gb`, `en-au`, `de-de`, `fr-fr`, `nl-nl`, `en-ca`, `ko-kr`, `pl-pl`, `sv-se`, `en-nz`, `cs-cz`, `da-dk`, `fi-fi`, `nb-no`, `es-es`, `it-it`, `pt-pt`
+
+Not available: `ja-jp` (no results), `zh-cn` (invalid response)
+
+---
+
 Generates:
 
 - BrickLink XML wanted lists

@@ -94,12 +94,29 @@
   bl_name: Vehicle Body, Scooter
   bl_part_no: '15396'
   source: rebrickable_fallback
+'6601252':
+  bl_alternate_no: []
+  bl_color_id: 157
+  bl_item_type: PART
+  bl_name: Hair and Hat, Floppy Witch Hat with Dark Bluish Gray Hair Print
+  bl_part_no: 20606pb05
+  source: rebrickable_fallback
 '6601726':
+  bl_alternate_no: []
   bl_color_id: 120
   bl_item_type: PART
+  bl_name: Minifigure, Hair Long Side Bangs, Bun with Molded Medium Brown Elf Ears
+    Pattern
   bl_part_no: 107096pb01
   ldraw_color_id: 15
   source: manual_override
+'6649894':
+  bl_alternate_no: []
+  bl_color_id: 88
+  bl_item_type: PART
+  bl_name: Plant, Bush 2 x 2 x 4
+  bl_part_no: '6064'
+  source: rebrickable_fallback
 '6655021':
   bl_alternate_no: []
   bl_color_id: 155
@@ -120,6 +137,14 @@
   bl_item_type: PART
   bl_name: Brick Curved 2 x 4 Double, No Studs, with Groove
   bl_part_no: 6192b
+  source: rebrickable_fallback
+'6657229':
+  bl_alternate_no: []
+  bl_color_id: 39
+  bl_item_type: PART
+  bl_name: Minifig Head Azure Lion, Yellow and Bright Light Orange Ornate Eyebrows,
+    Magenta Eyes, Dark Purple Eyeshadow, Whist Fangs Print
+  bl_part_no: 3626pb3208
   source: rebrickable_fallback
 '6660178':
   bl_alternate_no: []
