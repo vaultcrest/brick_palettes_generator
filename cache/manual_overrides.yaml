@@ -87,6 +87,13 @@
   bl_name: Tile 2 x 4 with Groove
   bl_part_no: '87079'
   source: rebrickable_fallback
+'6601183':
+  bl_alternate_no: []
+  bl_color_id: 39
+  bl_item_type: PART
+  bl_name: Vehicle Body, Scooter
+  bl_part_no: '15396'
+  source: rebrickable_fallback
 '6601726':
   bl_color_id: 120
   bl_item_type: PART
@@ -114,6 +121,48 @@
   bl_name: Brick Curved 2 x 4 Double, No Studs, with Groove
   bl_part_no: 6192b
   source: rebrickable_fallback
+'6660178':
+  bl_alternate_no: []
+  bl_color_id: 86
+  bl_item_type: PART
+  bl_name: Cone Half 10 x 5 x 6 [Plain]
+  bl_part_no: '29096'
+  source: rebrickable_fallback
+'6660796':
+  bl_alternate_no: []
+  bl_color_id: 86
+  bl_item_type: PART
+  bl_name: Duplo Siren / Flashing Light - Trans-Orange
+  bl_part_no: 2318c02
+  source: rebrickable_fallback
+'6660798':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Aircraft Fuselage Curved Forward 8 x 12 x 6 Top
+  bl_part_no: 67241pb01
+  source: rebrickable_fallback
+'6660825':
+  bl_alternate_no: []
+  bl_color_id: 20
+  bl_item_type: PART
+  bl_name: Rock, Jewel in Pearl Gold Holder pattern
+  bl_part_no: 105311pb01
+  source: rebrickable_fallback
+'6660880':
+  bl_alternate_no: []
+  bl_color_id: 14
+  bl_item_type: PART
+  bl_name: Rock, Jewel in Pearl Gold Holder pattern
+  bl_part_no: 105311pb01
+  source: rebrickable_fallback
+'6660920':
+  bl_alternate_no: []
+  bl_color_id: 51
+  bl_item_type: PART
+  bl_name: Rock, Jewel in Pearl Gold Holder pattern
+  bl_part_no: 105311pb01
+  source: rebrickable_fallback
 '6661103':
   bl_alternate_no: []
   bl_color_id: 120
@@ -136,6 +185,13 @@
     Magenta Eyes, Dark Purple Scales, Black Markings print
   bl_part_no: 82276pb08
   source: rebrickable_fallback
+'6670049':
+  bl_alternate_no: []
+  bl_color_id: 36
+  bl_item_type: PART
+  bl_name: Vehicle Body, Scooter
+  bl_part_no: '15396'
+  source: rebrickable_fallback
 '6670628':
   bl_alternate_no: []
   bl_color_id: 1
@@ -146,6 +202,13 @@
 '6670644':
   bl_alternate_no: []
   bl_color_id: 110
+  bl_item_type: PART
+  bl_name: Panel 1 x 2 x 1 with Rounded Corners and Central Divider
+  bl_part_no: '93095'
+  source: rebrickable_fallback
+'6670645':
+  bl_alternate_no: []
+  bl_color_id: 88
   bl_item_type: PART
   bl_name: Panel 1 x 2 x 1 with Rounded Corners and Central Divider
   bl_part_no: '93095'
@@ -163,4 +226,67 @@
   bl_item_type: PART
   bl_name: Panel 1 x 2 x 1 with Rounded Corners and Central Divider
   bl_part_no: '93095'
+  source: rebrickable_fallback
+'6681342':
+  bl_alternate_no: []
+  bl_color_id: 5
+  bl_item_type: PART
+  bl_name: Wedge Curved 8 x 3 x 2 Open Right
+  bl_part_no: '41749'
+  source: rebrickable_fallback
+'6681645':
+  bl_alternate_no: []
+  bl_color_id: 5
+  bl_item_type: PART
+  bl_name: Wedge Curved 8 x 3 x 2 Open Left
+  bl_part_no: '41750'
+  source: rebrickable_fallback
+'6681658':
+  bl_alternate_no: []
+  bl_color_id: 86
+  bl_item_type: PART
+  bl_name: Brick Special 1 x 2 x 2/3 with Studs on Sides
+  bl_part_no: '4595'
+  source: rebrickable_fallback
+'6681661':
+  bl_alternate_no: []
+  bl_color_id: 11
+  bl_item_type: PART
+  bl_name: Brick Special 1 x 2 x 2/3 with Studs on Sides
+  bl_part_no: '4595'
+  source: rebrickable_fallback
+'6681662':
+  bl_alternate_no: []
+  bl_color_id: 71
+  bl_item_type: PART
+  bl_name: Brick Special 1 x 2 x 2/3 with Studs on Sides
+  bl_part_no: '4595'
+  source: rebrickable_fallback
+'6681665':
+  bl_alternate_no: []
+  bl_color_id: 11
+  bl_item_type: PART
+  bl_name: Hair Ponytail Long with Side Bangs
+  bl_part_no: '62696'
+  source: rebrickable_fallback
+'6681667':
+  bl_alternate_no: []
+  bl_color_id: 167
+  bl_item_type: PART
+  bl_name: Hair Ponytail Long with Side Bangs
+  bl_part_no: '62696'
+  source: rebrickable_fallback
+'6681673':
+  bl_alternate_no: []
+  bl_color_id: 104
+  bl_item_type: PART
+  bl_name: Hair Ponytail Long with Side Bangs
+  bl_part_no: '62696'
+  source: rebrickable_fallback
+'6681675':
+  bl_alternate_no: []
+  bl_color_id: 80
+  bl_item_type: PART
+  bl_name: Plant, Leaves Stacked 4 x 5 x 1 2/3
+  bl_part_no: '5058'
   source: rebrickable_fallback

@@ -133,12 +133,18 @@
 0 bl_2958pb097.dat
 1 Technic, Disk 3 x 3 with Disk Brake Silver Rotor Pattern
 2 71
+0 3069bpb797.dat
+1 Tile 1 x 2 with United States Flag Pattern
+2 15
 0 bl_98088pb05.dat
 1 Dinosaur Wing Pteranodon - Left with Marbled Sand Green Edge Pattern
 2 288
 0 13459.dat
 1 Road Sign Round on Pole with Flat Top Attachment
 2 0
+0 30261p02.dat
+1 Road Sign 2 x 2 Round with Clip with Black '50' in Red Circle Pattern
+2 15
 0 67929.dat
 1 Plate, Modified 8 x 8 with Cut Corners, Raised Sides and 4 Feet
 2 15
@@ -229,9 +235,6 @@
 0 35701.dat
 1 Minifigure, Hair Short, Parted with Two Pigtails, Hole on Top
 2 25
-0 40001.dat
-1 Technic, Steering Wheel Pilot's Yoke
-2 72
 0 15068p0j.dat
 1 Slope, Curved 2 x 2 x 2/3 with Medium Azure, Dark Blue and Black Arctic Explorer Logo with White Outline Pattern
 2 25
@@ -307,6 +310,9 @@
 0 bl_973pb5515c04.dat
 1 Torso Reddish Orange and Black Classic Space Logo, Sand Blue Panel with Gold Lines, Dark Blue Trim Pattern / Bright Green Arms / Dark Blue Hands
 2 15
+0 5466.dat
+1 Door 1 x 4 x 6 with Window and Stud Handle
+2 70
 0 57906.dat
 1 Hinge Plate 3 x 12 with Angled Side Extensions and Tapered Ends
 2 362
@@ -547,12 +553,6 @@
 0 74166.dat
 1 Brick, Modified 8 x 16 x 2/3 with 1 x 4 Indentations and 2 Rounded Corners
 2 323
-0 5684.dat
-1 Minifigure Wings Feathered Extended Bent with Neck Bracket
-2 71
-0 21019bp05.dat
-1 Hips and Legs with Molded Black Lower Legs / Boots  Pattern
-2 72
 0 bl_60601pb046.dat
 1 Glass for Window 1 x 2 x 2 Flat Front with Gold Lattice, Flowers and Filigree Pattern
 2 47
@@ -565,9 +565,6 @@
 0 93160.dat
 1 Bone, Short
 2 29
-0 15396.dat
-1 Vehicle Body, Scooter
-2 3
 0 3005pb044.dat
 1 Brick 1 x 1 with Milk Carton, Glass, print
 2 73
@@ -577,3 +574,33 @@
 0 2676.dat
 1 Minifigure Beard, Full with Braided Moustache Ends and Braid in Back
 2 484
+0 42019.dat
+1 Wedge Curved 8 x 3 x 2 Open Right
+2 4
+0 41750.dat
+1 Wedge Curved 8 x 3 x 2 Open Left
+2 4
+0 396.dat
+1 Brick Special 1 x 2 x 2/3 with Studs on Sides
+2 71
+0 396.dat
+1 Brick Special 1 x 2 x 2/3 with Studs on Sides
+2 26
+0 396.dat
+1 Brick Special 1 x 2 x 2/3 with Studs on Sides
+2 0
+0 62696.dat
+1 Hair Ponytail Long with Side Bangs
+2 0
+0 62696.dat
+1 Hair Ponytail Long with Side Bangs
+2 29
+0 62696.dat
+1 Hair Ponytail Long with Side Bangs
+2 100167
+0 5058.dat
+1 Plant, Leaves Stacked 4 x 5 x 1 2/3
+2 288
+0 bl_3626cpb2761.dat
+1 Minifigure, Head Dual Sided Female, Reddish Brown Eyebrows, Orange Safety Glasses, Medium Nougat Lips, Scowl / Smile with Freckles Pattern
+2 14
