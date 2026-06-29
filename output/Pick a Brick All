@@ -4472,7 +4472,7 @@
 1 Tile 1 x 1
 2 27
 0 60849.dat
-1 Minifigure, Utensil Hose Nozzle Elaborate
+1 Minifigure, Utensil Hose Nozzle Elaborate - 4-Rib Handle
 2 0
 0 3009.dat
 1 Brick 1 x 6
@@ -7484,7 +7484,7 @@
 1 Slope, Curved 2 x 1 x 2/3
 2 25
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 0
 0 13965.dat
 1 Arch 1 x 3 x 3
@@ -9269,7 +9269,7 @@
 1 Arch 1 x 3 x 2 Inverted
 2 15
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 15
 0 245021.dat
 1 Wedge, Plate 3 x 3 Cut Corner
@@ -10937,7 +10937,7 @@
 1 Minifigure, Utensil Tool Spanner Wrench / Screwdriver
 2 179
 0 60849.dat
-1 Minifigure, Utensil Hose Nozzle Elaborate
+1 Minifigure, Utensil Hose Nozzle Elaborate - 4-Rib Handle
 2 297
 0 62113.dat
 1 Bar 1 x 4 x 3 Grille with End Protrusions
@@ -12791,7 +12791,7 @@
 1 Slope, Curved 2 x 2 x 2/3 Inverted
 2 15
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 191
 0 15573.dat
 1 Plate, Modified 1 x 2 with 1 Stud with Groove and Bottom Stud Holder &#40;Jumper&#41;
@@ -15128,7 +15128,7 @@
 1 Brick, Round Corner 4 x 4 Macaroni with 3 Studs
 2 5
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 4
 0 bl_3626pb2249.dat
 1 Minifigure, Head Dual Sided Female Black Eyebrows, Single Eyelashes, and Beauty Mark, Nougat Lips, Smirk with Dimple / Open Mouth Smile with Top Teeth Pattern
@@ -16077,6 +16077,9 @@
 2 15
 0 44301b.dat
 1 Hinge Plate 1 x 2 Locking with 1 Finger on End without Bottom Groove
+2 4
+0 44301b.dat
+1 Hinge Plate 1 x 2 Locking with 1 Finger on End without Bottom Groove
 2 0
 0 44301b.dat
 1 Hinge Plate 1 x 2 Locking with 1 Finger on End without Bottom Groove
@@ -16491,6 +16494,9 @@
 2 71
 0 64727.dat
 1 Minifigure, Weapon Sword, Spike Flexible 3.5L with Bar End
+2 2
+0 64727.dat
+1 Minifigure, Weapon Sword, Spike Flexible 3.5L with Bar End
 2 0
 0 64728.dat
 1 Minifigure, Utensil Dynamite Sticks Bundle
@@ -16553,7 +16559,7 @@
 1 Slope 45 2 x 2 Double Convex Corner
 2 3
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 3
 0 32607.dat
 1 Plant Plate, Round 1 x 1 with 3 Layered Leaves
@@ -18565,6 +18571,9 @@
 0 92092.dat
 1 Hinge Train Gate 2 x 4 Locking Dual 2 Fingers without Rear Reinforcements
 2 72
+0 4504369.dat
+1 Slope 30 1 x 1 x 2/3
+2 35
 0 65803.dat
 1 Technic, Brick 16 x 16 x 1 1/3 with Holes
 2 0
@@ -19185,6 +19194,9 @@
 2 70
 0 11476.dat
 1 Plate, Modified 1 x 2 with Clip on Side &#40;Horizontal Grip&#41;
+2 320
+0 11476.dat
+1 Plate, Modified 1 x 2 with Clip on Side &#40;Horizontal Grip&#41;
 2 484
 0 11476.dat
 1 Plate, Modified 1 x 2 with Clip on Side &#40;Horizontal Grip&#41;
@@ -19420,6 +19432,9 @@
 0 10052.dat
 1 Minifigure Beard, Rounded End
 2 15
+0 24324.dat
+1 Minifigure, Utensil Book Binding with 2 Studs
+2 0
 0 42862.dat
 1 Wedge 3 x 3 Sloped Left
 2 71
@@ -22013,7 +22028,7 @@
 1 Dinosaur Tail / Neck Middle Section with Bar Hole and Technic Pin
 2 330
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 330
 0 32034.dat
 1 Technic, Axle and Pin Connector Angled #2 - 180 degrees
@@ -23590,6 +23605,9 @@
 0 bl_98138pb260.dat
 1 Tile, Round 1 x 1 with Gold and Dark Brown Crown Coin Pattern
 2 297
+0 70681.dat
+1 Arch 1 x 3 Inverted
+2 25
 0 79846.dat
 1 Plate, Modified 2 x 6 x 2/3 Bent
 2 4
@@ -23791,6 +23809,9 @@
 0 301021.dat
 1 Brick 1 x 4
 2 78
+0 40001.dat
+1 Technic, Steering Wheel Pilot's Yoke
+2 0
 0 bl_731c08.dat
 1 Technic, Shock Absorber 6.5L with Black Piston Rod - Soft Spring, Tight Coils
 2 71
@@ -24119,7 +24140,7 @@
 1 Slope, Curved 3 x 1
 2 212
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 71
 0 4032b.dat
 1 Plate, Round 2 x 2 with Axle Hole
@@ -24619,6 +24640,9 @@
 0 44301b.dat
 1 Hinge Plate 1 x 2 Locking with 1 Finger on End without Bottom Groove
 2 25
+0 57585.dat
+1 Technic, Axle Connector Hub with 3 Axles
+2 0
 0 64290.dat
 1 Technic, Liftarm Thick 1 x 11
 2 1
@@ -29015,7 +29039,7 @@
 1 Bracket 1 x 2 - 2 x 1 Centered
 2 19
 0 4586.dat
-1 Technic, Link 1 x 9 with 3 Holes
+1 Technic, Link 1 x 9 with 3 Holes &#40;Train Coupling / Side Rod&#41;
 2 179
 0 bl_973pb5433c01.dat
 1 Torso Knit Cable Cardigan Sweater with Dark Bluish Gray Lines, Dark Brown Buttons, and Pockets over White Shirt Pattern / Light Bluish Gray Arms / Yellow Hands
@@ -30311,7 +30335,7 @@
 1 Brick, Modified Facet 4 x 4
 2 70
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 84
 0 47847.dat
 1 Rock Panel 2 x 4 x 6
@@ -32215,6 +32239,9 @@
 0 47759.dat
 1 Wedge 2 x 4 Triple
 2 28
+0 6134.dat
+1 Hinge Brick 2 x 2 Top Plate
+2 19
 0 18277.dat
 1 Minifigure Costume Tail Fluffy - Flexible Rubber
 2 84
@@ -32600,7 +32627,7 @@
 1 Minifigure, Head Dual Sided Female Black Eyebrows and Eyelashes, Medium Brown Eye Shadow and Lips, Grin / Open Mouth Smile with Teeth Pattern
 2 100241
 0 bl_10352c01pb06.dat
-1 Horse, Movable Legs with Black Eyes, White Pupils, and Single Silver Buckle on Black Bridle Pattern
+1 Horse, Movable Legs with Black Eyes and Single Silver Buckle on Black Bridle Pattern
 2 15
 0 bl_2632.dat
 1 Mini Doll, Hair Female Mid-Length, Wavy, Parted in Center
@@ -33235,6 +33262,9 @@
 0 87990.dat
 1 Minifigure, Hair Female Ponytail and Swept Sideways Fringe
 2 25
+0 5404.dat
+1 Slope 18 2 x 1 x 2/3
+2 4
 0 32952.dat
 1 Brick, Modified 1 x 1 x 1 2/3 with Studs on Side
 2 484
@@ -35075,7 +35105,7 @@
 1 Tile, Round 2 x 2 with Open Stud
 2 288
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 288
 0 68327.dat
 1 Wheel 41mm D. x 15mm Technic
@@ -35875,6 +35905,9 @@
 0 35044.dat
 1 Plate, Modified 4 x 4 with 3 x 3 Curved Cutout
 2 1
+0 5852.dat
+1 Slope, Curved 2 x 2 x 2/3 Corner Round
+2 15
 0 41125.dat
 1 Technic Circular Saw Blade with Pin Hole and Six Teeth &#40;Large Shuriken Throwing Star&#41;
 2 320
@@ -36557,7 +36590,7 @@
 1 Slope, Curved 1 x 1
 2 71
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 2
 0 80431.dat
 1 Technic, Brick Modified 1 x 2 x 1 1/3 with Rotation Joint Socket
@@ -36637,6 +36670,9 @@
 0 86876.dat
 1 Brick, Modified 1 x 2 with Stud on Side with Bottom Stud Holder
 2 10
+0 33492.dat
+1 Cone 1 1/2 x 1 1/2 x 2/3 Truncated
+2 15
 0 66788.dat
 1 Arm and Hand Long with Pin - Vertical Grip
 2 321
@@ -37175,7 +37211,7 @@
 1 Arch 2 x 2 Inverted Corner with Recessed Stud
 2 288
 0 60849.dat
-1 Minifigure, Utensil Hose Nozzle Elaborate
+1 Minifigure, Utensil Hose Nozzle Elaborate - 4-Rib Handle
 2 14
 0 63341.dat
 1 Slope 45 2 x 2
@@ -37868,7 +37904,7 @@
 1 Plate 1 x 8
 2 378
 0 40379.dat
-1 Dinosaur Tail End Section / Horn
+1 Dinosaur Tail End Section / Horn, Small
 2 19
 0 3917.dat
 1 Ring 3 x 3 with Stud Holder
@@ -38243,7 +38279,7 @@
 1 Slope, Inverted 45 2 x 2 without Bottom Tube or Bottom Pin
 2 37
 0 4586.dat
-1 Technic, Link 1 x 9 with 3 Holes
+1 Technic, Link 1 x 9 with 3 Holes &#40;Train Coupling / Side Rod&#41;
 2 2
 0 4185.dat
 1 Technic Wedge Belt Wheel &#40;Pulley&#41;
@@ -38971,6 +39007,9 @@
 0 99780.dat
 1 Bracket 1 x 2 - 1 x 2 Inverted
 2 10
+0 7126.dat
+1 Slope, Curved 1 x 1
+2 4
 0 76289.dat
 1 Hose, Rigid 3mm D.  7L / 5.6cm
 2 15
@@ -43922,7 +43961,7 @@
 1 Brick, Round Corner 5 x 5 x 3 1/3 Dome Top
 2 70
 0 21019bp04.dat
-1 Hips and Legs with Molded Yellow Lower Legs / Boots Pattern
+1 Hips and Legs with Molded Yellow Lower Legs / Boots  Pattern
 2 3
 0 4211385.dat
 1 Brick 2 x 4
@@ -45755,7 +45794,7 @@
 1 Plate, Round 1 x 3 with Open Studs
 2 14
 0 bl_970c00pb1853.dat
-1 Hips and Legs with Molded Light Bluish Gray Lower Legs / Boots Pattern
+1 Hips and Legs with Molded Light Bluish Gray Lower Legs / Boots  Pattern
 2 4
 0 32580.dat
 1 Hose, Soft Axle  7L
@@ -46054,6 +46093,15 @@
 0 6064.dat
 1 Plant Prickly Bush 2 x 2 x 4
 2 31
+0 bl_3626cpb2761.dat
+1 Minifigure, Head Dual Sided Female, Reddish Brown Eyebrows, Orange Safety Glasses, Medium Nougat Lips, Scowl / Smile with Freckles Pattern
+2 14
+0 79180.dat
+1 Bracket 5 x 2 x 1 1/3 with 2 Holes and Bottom Stud Holder
+2 71
+0 79180.dat
+1 Bracket 5 x 2 x 1 1/3 with 2 Holes and Bottom Stud Holder
+2 70
 0 73081.dat
 1 Vehicle, Steering Stand 1 x 2 with Black Steering Wheel
 2 0
@@ -46093,51 +46141,3 @@
 0 73081.dat
 1 Vehicle, Steering Stand 1 x 2 with Black Steering Wheel
 2 4
-0 7126.dat
-1 Slope, Curved 1 x 1
-2 4
-0 5852.dat
-1 Slope, Curved 2 x 2 x 2/3 Corner Round
-2 15
-0 5404.dat
-1 Slope 18 2 x 1 x 2/3
-2 4
-0 6134.dat
-1 Hinge Brick 2 x 2 Top Plate
-2 19
-0 79180.dat
-1 Bracket 5 x 2 x 1 1/3 with 2 Holes and Bottom Stud Holder
-2 70
-0 79180.dat
-1 Bracket 5 x 2 x 1 1/3 with 2 Holes and Bottom Stud Holder
-2 71
-0 70681.dat
-1 Arch 1 x 3 Inverted
-2 25
-0 44301b.dat
-1 Hinge Plate 1 x 2 Locking with 1 Finger on End without Bottom Groove
-2 4
-0 4504369.dat
-1 Slope 30 1 x 1 x 2/3
-2 35
-0 11476.dat
-1 Plate, Modified 1 x 2 with Clip on Side &#40;Horizontal Grip&#41;
-2 320
-0 24324.dat
-1 Minifigure, Utensil Book Binding with 2 Studs
-2 0
-0 57585.dat
-1 Technic, Axle Connector Hub with 3 Axles
-2 0
-0 64727.dat
-1 Minifigure, Weapon Sword, Spike Flexible 3.5L with Bar End
-2 2
-0 33492.dat
-1 Cone 1 1/2 x 1 1/2 x 2/3 Truncated
-2 15
-0 40001.dat
-1 Technic, Steering Wheel Pilot's Yoke
-2 0
-0 bl_3626cpb2761.dat
-1 Minifigure, Head Dual Sided Female, Reddish Brown Eyebrows, Orange Safety Glasses, Medium Nougat Lips, Scowl / Smile with Freckles Pattern
-2 14

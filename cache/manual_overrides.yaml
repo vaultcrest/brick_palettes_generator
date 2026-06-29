@@ -1,8 +1,83 @@
 '4653091':
+  bl_alternate_no:
+  - '3049'
   bl_color_id: 86
   bl_item_type: PART
+  bl_name: Slope 45 2 x 1 Double / Inverted with Bottom Stud Holder
   bl_part_no: 3049c
   source: manual
+'6289812':
+  bl_alternate_no: []
+  bl_color_id: 156
+  bl_item_type: PART
+  bl_name: Duplo Figure Child, Hair Combed Forward with Curl Black, Light Aqua Legs,
+    Bright Light Yellow Under Shirt, Jacket Print
+  bl_part_no: 47205pb074
+  source: rebrickable_fallback
+'6292954':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Duplo Figure Child with Two Buns on Top and Long Bangs Reddish Brown, with
+    Light Aqua Legs, Pink and White Strips In Heart on Shirt Print
+  bl_part_no: 47205pb072
+  source: rebrickable_fallback
+'6294039':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Duplo Figure Child with Ponytails and Bangs Black, with Nougat Face and
+    Hands, Bright Light Yellow Legs, Black Heart, Light Green Collar Print
+  bl_part_no: 47205pb069
+  source: rebrickable_fallback
+'6296134':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Duplo Figure Child with Short Wavy Hair Dark Brown, with Bright Light Blue
+    Legs, Shirt with Azure and Aqua Stripes and Pocket Print
+  bl_part_no: 47205pb068
+  source: rebrickable_fallback
+'6335905':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Duplo Figure Child with Ponytails and Bangs Black, with Light Nougat Face
+    and Hands, Bright Light Yellow Legs, Black Heart, Light Green Collar Print
+  bl_part_no: 47205pb079
+  source: rebrickable_fallback
+'6391969':
+  bl_alternate_no: []
+  bl_color_id: 4
+  bl_item_type: PART
+  bl_name: Duplo Figure with Headset and Cap White, with Medium Azure Arms, Orange
+    Safety Vest, and Black Legs
+  bl_part_no: 47394pb288
+  source: rebrickable_fallback
+'6391971':
+  bl_alternate_no: []
+  bl_color_id: 236
+  bl_item_type: PART
+  bl_name: Duplo Figure with Construction Helmet White, Reddish Brown Hair, with Vibrant
+    Yellow Vest, Dark Blue Legs
+  bl_part_no: 47394pb362
+  source: rebrickable_fallback
+'6461199':
+  bl_alternate_no: []
+  bl_color_id: 103
+  bl_item_type: PART
+  bl_name: Duplo Figure Child with Short Wavy Hair Dark Brown, Light Bluish Gray Legs,
+    Letterman Jacket Print
+  bl_part_no: 47205pb086
+  source: rebrickable_fallback
+'6469554':
+  bl_alternate_no: []
+  bl_color_id: 34
+  bl_item_type: PART
+  bl_name: Duplo Figure Child, Afro Dark Brown, Light Bluish Gray Legs, Bright Pink
+    Shirt with Music Note Print
+  bl_part_no: 47205pb111
+  source: rebrickable_fallback
 '6474068':
   bl_alternate_no: []
   bl_color_id: 156
@@ -18,12 +93,26 @@
   bl_name: Windscreen 6 x 4 x 1 Hexagonal with Handle
   bl_part_no: '27262'
   source: rebrickable_fallback
+'6503218':
+  bl_alternate_no: []
+  bl_color_id: 13
+  bl_item_type: PART
+  bl_name: Dish 4 x 4 Inverted with Open Stud [Radar]
+  bl_part_no: '35394'
+  source: rebrickable_fallback
 '6503480':
   bl_alternate_no: []
   bl_color_id: 98
   bl_item_type: PART
   bl_name: Wave / Flame Rounded Large [Plain]
   bl_part_no: '85959'
+  source: rebrickable_fallback
+'6507982':
+  bl_alternate_no: []
+  bl_color_id: 13
+  bl_item_type: PART
+  bl_name: Tile 4 x 4 Curved, Macaroni
+  bl_part_no: '27507'
   source: rebrickable_fallback
 '6510737':
   bl_alternate_no: []
@@ -32,12 +121,26 @@
   bl_name: Hair Wavy and Windblown to One Side
   bl_part_no: '32602'
   source: rebrickable_fallback
+'6513946':
+  bl_alternate_no: []
+  bl_color_id: 51
+  bl_item_type: PART
+  bl_name: Shield Ovoid with Grip [Plain]
+  bl_part_no: '92747'
+  source: rebrickable_fallback
 '6513991':
   bl_alternate_no: []
   bl_color_id: 18
   bl_item_type: PART
   bl_name: Wave / Flame Rounded Large with Marbled Trans-Brown Pattern
   bl_part_no: 85959pb06
+  source: rebrickable_fallback
+'6514123':
+  bl_alternate_no: []
+  bl_color_id: 13
+  bl_item_type: PART
+  bl_name: Panel 1 x 2 x 1 [Rounded Corners]
+  bl_part_no: 4865b
   source: rebrickable_fallback
 '6514360':
   bl_alternate_no: []
@@ -60,6 +163,20 @@
   bl_name: Brick Curved 1 x 2 x 1 2/3 with 1 Cutout
   bl_part_no: '5907'
   source: rebrickable_fallback
+'6521395':
+  bl_alternate_no: []
+  bl_color_id: 1
+  bl_item_type: PART
+  bl_name: Technic Wishbone Suspension Arm 9L
+  bl_part_no: x136
+  source: rebrickable_fallback
+'6523010':
+  bl_alternate_no: []
+  bl_color_id: 3
+  bl_item_type: PART
+  bl_name: Technic Wishbone Suspension Arm 9L
+  bl_part_no: x136
+  source: rebrickable_fallback
 '6555881':
   bl_alternate_no: []
   bl_color_id: 17
@@ -80,12 +197,48 @@
   bl_item_type: PART
   bl_part_no: '3626'
   source: manual
+'6586355':
+  bl_alternate_no: []
+  bl_color_id: 120
+  bl_item_type: PART
+  bl_name: Weapon Slingshot
+  bl_part_no: '19900'
+  source: rebrickable_fallback
+'6586780':
+  bl_alternate_no: []
+  bl_color_id: 90
+  bl_item_type: PART
+  bl_name: Large Figure Hand with Arm
+  bl_part_no: '109866'
+  source: rebrickable_fallback
+'6587111':
+  bl_alternate_no: []
+  bl_color_id: 11
+  bl_item_type: PART
+  bl_name: Aircraft Fuselage Curved Forward 6 x 10 x 4 Top with 2 Trans-Clear Window
+    Panes
+  bl_part_no: 69953pb01
+  source: rebrickable_fallback
+'6589826':
+  bl_alternate_no: []
+  bl_color_id: 4
+  bl_item_type: PART
+  bl_name: Duplo Figure with Headset and Cap White, Dark Blue Legs, Safety Vest Print
+  bl_part_no: 47394pb380
+  source: rebrickable_fallback
 '6590056':
   bl_alternate_no: []
   bl_color_id: 42
   bl_item_type: PART
   bl_name: Tile 2 x 4 with Groove
   bl_part_no: '87079'
+  source: rebrickable_fallback
+'6594955':
+  bl_alternate_no: []
+  bl_color_id: 104
+  bl_item_type: PART
+  bl_name: Brick Round Corner 4 x 4 x 1 with Bottom Cut Outs, No Studs, Flat Top
+  bl_part_no: '5649'
   source: rebrickable_fallback
 '6601183':
   bl_alternate_no: []
@@ -110,6 +263,69 @@
   bl_part_no: 107096pb01
   ldraw_color_id: 15
   source: manual_override
+'6606105':
+  bl_alternate_no: []
+  bl_color_id: 59
+  bl_item_type: PART
+  bl_name: Hair Ponytail and Fringe
+  bl_part_no: '13785'
+  source: rebrickable_fallback
+'6606108':
+  bl_alternate_no: []
+  bl_color_id: 4
+  bl_item_type: PART
+  bl_name: Hair Ponytail and Fringe
+  bl_part_no: '13785'
+  source: rebrickable_fallback
+'6610678':
+  bl_alternate_no: []
+  bl_color_id: 11
+  bl_item_type: PART
+  bl_name: Hair Short and Bushy
+  bl_part_no: '38798'
+  source: rebrickable_fallback
+'6618626':
+  bl_alternate_no: []
+  bl_color_id: 36
+  bl_item_type: PART
+  bl_name: Hat, Butcher
+  bl_part_no: '98381'
+  source: rebrickable_fallback
+'6621858':
+  bl_alternate_no: []
+  bl_color_id: 110
+  bl_item_type: PART
+  bl_name: Wedge Curved 6 x 4 Triple
+  bl_part_no: '43712'
+  source: rebrickable_fallback
+'6640384':
+  bl_alternate_no: []
+  bl_color_id: 86
+  bl_item_type: PART
+  bl_name: Technic Engine Crankshaft
+  bl_part_no: '2853'
+  source: rebrickable_fallback
+'6645741':
+  bl_alternate_no: []
+  bl_color_id: 80
+  bl_item_type: PART
+  bl_name: Minifig Neckwear Hood Folded Down
+  bl_part_no: '15428'
+  source: rebrickable_fallback
+'6648022':
+  bl_alternate_no: []
+  bl_color_id: 68
+  bl_item_type: PART
+  bl_name: Hair Mid-Length Tousled with Center Part
+  bl_part_no: '88283'
+  source: rebrickable_fallback
+'6648023':
+  bl_alternate_no: []
+  bl_color_id: 69
+  bl_item_type: PART
+  bl_name: Hair Mid-Length Tousled with Center Part
+  bl_part_no: '88283'
+  source: rebrickable_fallback
 '6649894':
   bl_alternate_no: []
   bl_color_id: 88
@@ -145,6 +361,22 @@
   bl_name: Minifig Head Azure Lion, Yellow and Bright Light Orange Ornate Eyebrows,
     Magenta Eyes, Dark Purple Eyeshadow, Whist Fangs Print
   bl_part_no: 3626pb3208
+  source: rebrickable_fallback
+'6657250':
+  bl_alternate_no: []
+  bl_color_id: 152
+  bl_item_type: PART
+  bl_name: Minifig Head The Golden-Winged Eagle, Dark Purple Eyes, Bright Light Orange
+    Beak, Dark Turquoise Markings print
+  bl_part_no: 3626pb3206
+  source: rebrickable_fallback
+'6659429':
+  bl_alternate_no: []
+  bl_color_id: 158
+  bl_item_type: PART
+  bl_name: Lower Body with Dark Turquoise Tail (Snake) with Robe, Dark Green Shirt,
+    Gold Decorations print
+  bl_part_no: 98140pb14
   source: rebrickable_fallback
 '6660178':
   bl_alternate_no: []
@@ -194,6 +426,13 @@
   bl_item_type: PART
   bl_name: Hair, Long Curly, Internal Supports
   bl_part_no: '5828'
+  source: rebrickable_fallback
+'6661183':
+  bl_alternate_no: []
+  bl_color_id: 228
+  bl_item_type: PART
+  bl_name: Headwear Accessory Crown / Tiara, 5 Points
+  bl_part_no: '25974'
   source: rebrickable_fallback
 '6661191':
   bl_alternate_no: []

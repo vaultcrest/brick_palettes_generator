@@ -2019,6 +2019,9 @@
 2 71
 0 64727.dat
 1 Minifigure, Weapon Sword, Spike Flexible 3.5L with Bar End
+2 2
+0 64727.dat
+1 Minifigure, Weapon Sword, Spike Flexible 3.5L with Bar End
 2 0
 0 87747.dat
 1 Barb / Claw / Horn / Tooth - Medium
@@ -2452,6 +2455,9 @@
 0 35635.dat
 1 Minifigure Armor Shoulder Pads with Double Flaps
 2 297
+0 3069bpb797.dat
+1 Tile 1 x 2 with United States Flag Pattern
+2 15
 0 43056.dat
 1 Hinge Plate 2 x 4 with Pin Hole and 2 Holes - Bottom
 2 15
@@ -3565,6 +3571,9 @@
 0 78168.dat
 1 Plate, Modified 2 x 6 with Coupling, Female
 2 15
+0 40001.dat
+1 Technic, Steering Wheel Pilot's Yoke
+2 0
 0 41948.dat
 1 Plate, Round 8 x 8 Rounded End
 2 10
@@ -4874,7 +4883,7 @@
 1 Slope 15 5 x 8 x 2/3 with 12 Recessed Studs
 2 72
 0 4586.dat
-1 Technic, Link 1 x 9 with 3 Holes
+1 Technic, Link 1 x 9 with 3 Holes &#40;Train Coupling / Side Rod&#41;
 2 179
 0 47753.dat
 1 Wedge 4 x 4 Triple Curved No Studs
@@ -7372,6 +7381,9 @@
 0 bl_3068pb2562.dat
 1 Tile 2 x 2 with Dark Turquoise and Orange Chevrons, Yellow Diamonds, Blue Star Pattern
 2 19
+0 33492.dat
+1 Cone 1 1/2 x 1 1/2 x 2/3 Truncated
+2 15
 0 66788.dat
 1 Arm and Hand Long with Pin - Vertical Grip
 2 321
@@ -8009,7 +8021,7 @@
 1 Slope, Inverted 45 2 x 2 without Bottom Tube or Bottom Pin
 2 37
 0 4586.dat
-1 Technic, Link 1 x 9 with 3 Holes
+1 Technic, Link 1 x 9 with 3 Holes &#40;Train Coupling / Side Rod&#41;
 2 2
 0 18910.dat
 1 Panel 3 x 4 x 3 Curved with Double Clip Hinge
@@ -11244,19 +11256,10 @@
 2 191
 0 93095.dat
 1 Panel 1 x 2 x 1 with Rounded Corners and Central Divider
+2 70
+0 93095.dat
+1 Panel 1 x 2 x 1 with Rounded Corners and Central Divider
 2 19
 0 93095.dat
 1 Panel 1 x 2 x 1 with Rounded Corners and Central Divider
 2 322
-0 93095.dat
-1 Panel 1 x 2 x 1 with Rounded Corners and Central Divider
-2 70
-0 64727.dat
-1 Minifigure, Weapon Sword, Spike Flexible 3.5L with Bar End
-2 2
-0 33492.dat
-1 Cone 1 1/2 x 1 1/2 x 2/3 Truncated
-2 15
-0 40001.dat
-1 Technic, Steering Wheel Pilot's Yoke
-2 0

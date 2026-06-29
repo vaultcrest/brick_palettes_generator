@@ -133,9 +133,6 @@
 0 bl_2958pb097.dat
 1 Technic, Disk 3 x 3 with Disk Brake Silver Rotor Pattern
 2 71
-0 3069bpb797.dat
-1 Tile 1 x 2 with United States Flag Pattern
-2 15
 0 bl_98088pb05.dat
 1 Dinosaur Wing Pteranodon - Left with Marbled Sand Green Edge Pattern
 2 288
@@ -574,6 +571,9 @@
 0 2676.dat
 1 Minifigure Beard, Full with Braided Moustache Ends and Braid in Back
 2 484
+0 bl_3626cpb2761.dat
+1 Minifigure, Head Dual Sided Female, Reddish Brown Eyebrows, Orange Safety Glasses, Medium Nougat Lips, Scowl / Smile with Freckles Pattern
+2 14
 0 42019.dat
 1 Wedge Curved 8 x 3 x 2 Open Right
 2 4
@@ -585,22 +585,19 @@
 2 71
 0 396.dat
 1 Brick Special 1 x 2 x 2/3 with Studs on Sides
-2 26
+2 0
 0 396.dat
 1 Brick Special 1 x 2 x 2/3 with Studs on Sides
-2 0
+2 26
 0 62696.dat
 1 Hair Ponytail Long with Side Bangs
 2 0
-0 62696.dat
-1 Hair Ponytail Long with Side Bangs
-2 29
 0 62696.dat
 1 Hair Ponytail Long with Side Bangs
 2 100167
+0 62696.dat
+1 Hair Ponytail Long with Side Bangs
+2 29
 0 5058.dat
 1 Plant, Leaves Stacked 4 x 5 x 1 2/3
 2 288
-0 bl_3626cpb2761.dat
-1 Minifigure, Head Dual Sided Female, Reddish Brown Eyebrows, Orange Safety Glasses, Medium Nougat Lips, Scowl / Smile with Freckles Pattern
-2 14
